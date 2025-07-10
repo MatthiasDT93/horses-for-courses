@@ -4,9 +4,9 @@ namespace HorsesForCourses.Core;
 
 public class Coach
 {
-    public List<string> Competencies = new();
+    private List<string> Competencies = new();
 
-    public List<CourseTime> Bookings = new();
+    private List<CourseTime> Bookings = new();
 
     public string Name { get; set; }
 

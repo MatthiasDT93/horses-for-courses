@@ -11,7 +11,7 @@ public class Course
 {
     public string CourseName { get; set; }
 
-    public States Status;
+    private States Status;
 
     public List<string> RequiredCompetencies { get; set; }
 
@@ -19,7 +19,7 @@ public class Course
 
     public CourseTime Duration { get; set; }
 
-    public Coach? coach { get; set; }
+    private Coach? coach { get; set; }
 
     public Course(string name, DateTime start, DateTime end)
     {
