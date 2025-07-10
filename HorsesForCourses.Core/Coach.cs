@@ -8,9 +8,9 @@ public class Coach
 
     private List<CourseTime> Bookings = new();
 
-    public string Name { get; set; }
+    public string Name { get; }
 
-    public EmailAddress Email { get; set; }
+    public EmailAddress Email { get; }
 
 
     public Coach(string name, string mail)

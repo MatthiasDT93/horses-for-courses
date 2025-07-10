@@ -13,13 +13,13 @@ public class Course
 
     private States Status;
 
-    public List<string> RequiredCompetencies { get; set; }
+    public List<string> RequiredCompetencies { get; }
 
-    public List<CourseTime> Planning { get; set; }
+    public List<CourseTime> Planning { get; }
 
-    public CourseTime Duration { get; set; }
+    public CourseTime Duration { get; }
 
-    private Coach? coach { get; set; }
+    private Coach? coach;
 
     public Course(string name, DateTime start, DateTime end)
     {
