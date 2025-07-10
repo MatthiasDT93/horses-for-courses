@@ -7,9 +7,9 @@ public record EmailAddress
     public static EmailAddress From(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Email mag niet leeg zijn.");
+            throw new ArgumentException("Email cannot be empty.");
         if (!value.Contains("@"))
-            throw new ArgumentException("Ongeldig emailformaat.");
+            throw new ArgumentException("Invalid email format.");
         return new EmailAddress(value);
     }
 }
