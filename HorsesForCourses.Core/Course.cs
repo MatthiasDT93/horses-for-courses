@@ -71,13 +71,46 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            var start = ct.StartTime;
-            var end = ct.EndTime;
-            while (end <= Duration.EndTime)
+            if (!Planning.Contains(ct))
             {
-                Planning.Add(CourseTime.From(start, end));
-                start.AddDays(7.0);
-                end.AddDays(7.0);
+                var start = ct.StartTime;
+                var end = ct.EndTime;
+                while (end <= Duration.EndTime)
+                {
+                    Planning.Add(CourseTime.From(start, end));
+                    start.AddDays(7.0);
+                    end.AddDays(7.0);
+                }
+            }
+            else
+            {
+                throw new Exception("This is already planned in.");
+            }
+        }
+        else
+        {
+            throw new Exception("Course has been finalised and cannot be altered.");
+        }
+    }
+
+    public void RemoveCourseMoment(CourseTime ct)
+    {
+        if (Status != States.FINALISED)
+        {
+            if (Planning.Contains(ct))
+            {
+                var start = ct.StartTime;
+                var end = ct.EndTime;
+                while (end <= Duration.EndTime)
+                {
+                    Planning.Remove(CourseTime.From(start, end));
+                    start.AddDays(7.0);
+                    end.AddDays(7.0);
+                }
+            }
+            else
+            {
+                throw new Exception("This is not yet planned in.");
             }
         }
         else
