@@ -15,20 +15,23 @@ public class Course
 
     public List<string> RequiredCompetencies { get; }
 
-    public List<CourseTime> Planning { get; }
+    public List<Timeslot> Planning { get; }
 
-    public CourseTime Duration { get; }
+    public DateOnly StartDate { get; }
+
+    public DateOnly EndDate { get; }
 
     private Coach? coach;
 
-    public Course(string name, DateTime start, DateTime end)
+    public Course(string name, DateOnly start, DateOnly end)
     {
         CourseName = name;
         Status = States.PENDING;
         Planning = new();
         RequiredCompetencies = new();
         coach = null;
-        Duration = CourseTime.From(start, end);
+        StartDate = start;
+        EndDate = end;
     }
 
 
@@ -42,14 +45,10 @@ public class Course
                 RequiredCompetencies.Add(req);
             }
             else
-            {
                 throw new Exception("This required competence is already added.");
-            }
         }
         else
-        {
             throw new Exception("Course has been finalised and cannot be altered.");
-        }
     }
 
     public void RemoveRequirement(string req)
@@ -62,68 +61,31 @@ public class Course
             }
         }
         else
-        {
             throw new Exception("Course has been finalised and cannot be altered.");
-        }
     }
 
-    public void AddCourseMoment(CourseTime ct)
+    public void AddCourseMoment(Timeslot slot)
     {
         if (Status != States.FINALISED)
         {
-            if (!Planning.Contains(ct))
-            {
-                if (ct.EndTime - ct.StartTime < new TimeSpan(8, 0, 0))
-                {
-                    var start = ct.StartTime;
-                    var end = ct.EndTime;
-                    while (end <= Duration.EndTime)
-                    {
-                        Planning.Add(CourseTime.From(start, end));
-                        start.AddDays(7.0);
-                        end.AddDays(7.0);
-                    }
-                }
-                else
-                {
-                    throw new Exception("Cannot plan in a course that's longer than 8hours.");
-                }
-            }
+            if (!Planning.Contains(slot)) { Planning.Add(slot); }
             else
-            {
                 throw new Exception("This is already planned in.");
-            }
         }
         else
-        {
             throw new Exception("Course has been finalised and cannot be altered.");
-        }
     }
 
-    public void RemoveCourseMoment(CourseTime ct)
+    public void RemoveCourseMoment(Timeslot slot)
     {
         if (Status != States.FINALISED)
         {
-            if (Planning.Contains(ct))
-            {
-                var start = ct.StartTime;
-                var end = ct.EndTime;
-                while (end <= Duration.EndTime)
-                {
-                    Planning.Remove(CourseTime.From(start, end));
-                    start.AddDays(7.0);
-                    end.AddDays(7.0);
-                }
-            }
+            if (Planning.Contains(slot)) { Planning.Remove(slot); }
             else
-            {
                 throw new Exception("This is not yet planned in.");
-            }
         }
         else
-        {
             throw new Exception("Course has been finalised and cannot be altered.");
-        }
     }
 
     public void ConfirmCourse()

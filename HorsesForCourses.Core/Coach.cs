@@ -6,7 +6,11 @@ public class Coach
 {
     private List<string> Competencies = new();
 
-    private List<CourseTime> Bookings = new();
+    public IReadOnlyList<string> competencies => Competencies;
+
+    private List<Timeslot> Bookings = new();
+
+    public IReadOnlyList<Timeslot> bookings => Bookings;
 
     public string Name { get; }
 
@@ -39,12 +43,12 @@ public class Coach
         }
     }
 
-    public void BookIn(CourseTime ct)
+    public void BookIn(Timeslot slot)
     {
-        var busy = Bookings.Any(t => ct.OverlapEarly(ct) || ct.OverlapContain(t) || ct.OverlapAfter(t));
+        var busy = Bookings.Any(t => slot.Overlap(t));
         if (!busy)
         {
-            Bookings.Add(ct);
+            Bookings.Add(slot);
         }
         else
         {
