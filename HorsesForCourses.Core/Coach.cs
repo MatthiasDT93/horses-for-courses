@@ -40,12 +40,13 @@ public class Coach
 
     public void BookIn(List<Timeslot> planning)
     {
-        Bookings.AddRange(planning);
+        if (!Bookings.Any(booking => planning.Any(slot => slot.Overlap(booking)))) { Bookings.AddRange(planning); }
+        else throw new Exception("Coach's schedule does not match with this planning.");
     }
 
     public bool IsCompetent(List<string> requirements)
     {
-        var competent = Competencies.All(c => requirements.Contains(c));
+        var competent = requirements.All(c => Competencies.Contains(c));
 
         return competent;
     }

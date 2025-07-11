@@ -62,9 +62,9 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            if (!Planning.Contains(slot)) { Planning.Add(slot); }
+            if (!Planning.Any(p => p.Overlap(slot))) { Planning.Add(slot); }
             else
-                throw new Exception("This is already planned in.");
+                throw new Exception("There is overlap between the time slots.");
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");
