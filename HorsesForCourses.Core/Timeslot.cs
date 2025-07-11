@@ -19,23 +19,23 @@ public record Timeslot
         return new Timeslot(day, start, end);
     }
 
-    private bool OverlapEarly(Timeslot slot)
-    {
-        return slot.Start < Start && slot.End > Start;
-    }
+    //     private bool OverlapEarly(Timeslot slot)
+    //     {
+    //         return slot.Start < Start && slot.End > Start;
+    //     }
 
-    private bool OverlapContain(Timeslot slot)
-    {
-        return (slot.Start > Start && slot.End < End) || (slot.Start == Start && slot.End == End);
-    }
+    //     private bool OverlapContain(Timeslot slot)
+    //     {
+    //         return (slot.Start > Start && slot.End < End) || (slot.Start == Start && slot.End == End);
+    //     }
 
-    private bool OverlapAfter(Timeslot slot)
-    {
-        return slot.Start < End && slot.End > End;
-    }
+    //     private bool OverlapAfter(Timeslot slot)
+    //     {
+    //         return slot.Start < End && slot.End > End;
+    //     }
 
-    public bool Overlap(Timeslot slot)
-    {
-        return OverlapEarly(slot) || OverlapContain(slot) || OverlapAfter(slot);
-    }
+    //     public bool Overlap(Timeslot slot)
+    //     {
+    //         return OverlapEarly(slot) || OverlapContain(slot) || OverlapAfter(slot);
+    //     }
 }

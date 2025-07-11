@@ -93,8 +93,10 @@ public class Course
         if (this.coach != null) throw new Exception("A coach is already planned in for this course.");
         if (Status != States.CONFIRMED) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
         if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
+        if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
 
         this.coach = coach;
+        coach.BookIn(Planning);
         Status = States.FINALISED;
     }
 }

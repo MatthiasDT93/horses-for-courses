@@ -38,16 +38,9 @@ public class Coach
         if (!Competencies.Remove(comp)) { throw new Exception($"Coach {Name} does not have this competence."); }
     }
 
-    public void BookIn(Timeslot slot)
+    public void BookIn(List<Timeslot> planning)
     {
-        var busy = Bookings.Any(t => slot.Overlap(t));
-        if (!busy)
-        {
-            Bookings.Add(slot);
-        }
-        else
-            throw new ArgumentException($"Coach {Name} is busy around this time.");
-
+        Bookings.AddRange(planning);
     }
 
     public bool IsCompetent(List<string> requirements)
