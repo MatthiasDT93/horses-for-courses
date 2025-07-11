@@ -21,7 +21,7 @@ public class Course
 
     public DateOnly EndDate { get; }
 
-    private Coach? coach;
+    public Coach? coach;
 
     public Course(string name, DateOnly start, DateOnly end)
     {
@@ -36,7 +36,7 @@ public class Course
 
 
 
-    public void AddRequirements(string req)
+    public void AddRequirement(string req)
     {
         if (Status != States.FINALISED)
         {
@@ -82,21 +82,25 @@ public class Course
 
     public void ConfirmCourse()
     {
-        if (Status == States.PENDING) throw new Exception("Cannot confirm a course that's not in the PENDING state.");
-        if (Planning.Count != 0) throw new Exception("Cannot confirm a course that does not have a planning yet.");
+        if (Status != States.PENDING) throw new Exception($"Cannot confirm a course that's not in the PENDING state, current state is: {Status}.");
+        if (Planning.Count == 0) throw new Exception("Cannot confirm a course that does not have a planning yet.");
 
         Status = States.CONFIRMED;
     }
 
     public void AddCoach(Coach coach)
     {
-        if (this.coach != null) throw new Exception("A coach is already planned in for this course.");
-        if (Status != States.CONFIRMED) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
-        if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
-        if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
+        if (Status != States.FINALISED)
+        {
+            if (Status == States.PENDING) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
+            if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
+            if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
 
-        this.coach = coach;
-        coach.BookIn(Planning);
-        Status = States.FINALISED;
+            this.coach = coach;
+            coach.BookIn(Planning);
+            Status = States.FINALISED;
+        }
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 }
