@@ -132,6 +132,7 @@ public class CourseTest
 
         course.AddCoach(coach2);
         Assert.Equal("Benny", course.coach.Name);
+        //Assert.Equal(course.coach, coach);
     }
 
     [Fact]
