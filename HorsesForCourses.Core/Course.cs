@@ -40,10 +40,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            if (!RequiredCompetencies.Contains(req))
-            {
-                RequiredCompetencies.Add(req);
-            }
+            if (!RequiredCompetencies.Contains(req)) { RequiredCompetencies.Add(req); }
             else
                 throw new Exception("This required competence is already added.");
         }
@@ -55,10 +52,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            if (!RequiredCompetencies.Remove(req))
-            {
-                throw new Exception("This course does not have this requirement.");
-            }
+            if (!RequiredCompetencies.Remove(req)) { throw new Exception("This course does not have this requirement."); }
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");
@@ -80,9 +74,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            if (Planning.Contains(slot)) { Planning.Remove(slot); }
-            else
-                throw new Exception("This is not yet planned in.");
+            if (!Planning.Remove(slot)) { throw new Exception("This is not yet planned in."); }
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");
