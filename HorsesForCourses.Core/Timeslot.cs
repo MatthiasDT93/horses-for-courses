@@ -21,22 +21,22 @@ public record Timeslot
 
     private bool OverlapEarly(Timeslot slot)
     {
-        return slot.Start < Start && slot.End > Start;
+        return slot.Day == Day && slot.Start < Start && slot.End > Start;
     }
 
     private bool OverlapContain(Timeslot slot)
     {
-        return (slot.Start > Start && slot.End < End) || (slot.Start == Start && slot.End == End);
+        return (slot.Day == Day && slot.Start > Start && slot.End < End) || (slot.Day == Day && slot.Start == Start && slot.End == End);
     }
 
     private bool OverlapAfter(Timeslot slot)
     {
-        return slot.Start < End && slot.End > End;
+        return slot.Day == Day && slot.Start < End && slot.End > End;
     }
 
     private bool OverlapEqual(Timeslot slot)
     {
-        return slot.Start == Start && slot.End == End;
+        return slot.Day == Day && slot.Start == Start && slot.End == End;
     }
 
     public bool Overlap(Timeslot slot)
