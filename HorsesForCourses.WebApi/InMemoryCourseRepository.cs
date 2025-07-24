@@ -6,7 +6,7 @@ public class InMemoryCourseRepository
 
     public void SaveCourse(Course course)
     {
-        int index = _courses.FindIndex(c => c.CourseName == course.CourseName && c.StartDate == course.StartDate && c.EndDate == course.EndDate);
+        int index = _courses.FindIndex(c => c.Id == course.Id);
         if (index >= 0)
         {
             _courses[index] = course;
