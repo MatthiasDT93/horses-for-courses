@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HorsesForCourses.WebApi.Controllers;
 
 [ApiController]
-[Route("courses")]
+[Route("/courses")]
 public class CourseController : ControllerBase
 {
 
