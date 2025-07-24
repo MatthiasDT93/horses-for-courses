@@ -11,10 +11,13 @@ public class CourseController : ControllerBase
     private readonly ILogger<CourseController> _logger;
     private readonly InMemoryCourseRepository _repository;
 
-    public CourseController(ILogger<CourseController> logger, InMemoryCourseRepository repository)
+    private readonly InMemoryCoachRepository _coaches;
+
+    public CourseController(ILogger<CourseController> logger, InMemoryCourseRepository repository, InMemoryCoachRepository coaches)
     {
         _logger = logger;
         _repository = repository;
+        _coaches = coaches;
     }
 
     [HttpGet("/courses/{id}")]
@@ -70,17 +73,51 @@ public class CourseController : ControllerBase
             return NotFound($"Course with id '{id}' not found.");
         }
 
-
-        foreach (var slot in request.TimeSlotsToAdd.Distinct())
-        {
-            course.AddCourseMoment(slot);
-        }
         foreach (var slot in request.TimeSlotsToRemove.Distinct())
         {
-            course.RemoveCourseMoment(slot);
+            var mapslot = new Timeslot(slot.Day, slot.Start, slot.End);
+            course.RemoveCourseMoment(mapslot);
+        }
+        foreach (var slot in request.TimeSlotsToAdd.Distinct())
+        {
+            var mapslot = new Timeslot(slot.Day, slot.Start, slot.End);
+            course.AddCourseMoment(mapslot);
         }
 
         _repository.SaveCourse(course);
+        return Ok();
+    }
+
+
+    [HttpPost("/courses/{id}/confirm")]
+    public ActionResult ConfirmCourse(Guid id)
+    {
+        var course = _repository.GetById(id);
+        if (course == null)
+        {
+            return NotFound($"Course with id '{id}' not found.");
+        }
+
+        course.ConfirmCourse();
+        return Ok();
+    }
+
+    [HttpPost("/courses/{CourseId}/assign-coach")]
+    public ActionResult AssignCoach(Guid CourseId, Guid CoachId)
+    {
+        var course = _repository.GetById(CourseId);
+        if (course == null)
+        {
+            return NotFound($"Course with id '{CourseId}' not found.");
+        }
+
+        var coach = _coaches.GetById(CoachId);
+        if (coach == null)
+        {
+            return NotFound($"Coach with id '{CoachId}' not found.");
+        }
+
+        course.AddCoach(coach);
         return Ok();
     }
 }
