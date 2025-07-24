@@ -18,10 +18,10 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("/courses")]
-    public ActionResult<Course> AddCoach([FromBody] Course courserequest)
+    public ActionResult<Course> AddCoach([FromBody] CourseDTO courserequest)
     {
         //var mail = EmailAddress.From(coachrequest.Email);
-        var course = new Course(courserequest.CourseName, courserequest.StartDate, courserequest.EndDate);
+        var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
         _repository.SaveCourse(course);
         return Ok();
     }

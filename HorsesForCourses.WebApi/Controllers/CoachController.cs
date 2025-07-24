@@ -19,16 +19,16 @@ public class CoachController : ControllerBase
     }
 
     [HttpPost("/coaches")]
-    public ActionResult<Coach> AddCoach([FromBody] Coach coachrequest)
+    public ActionResult<Guid> AddCoach([FromBody] CoachDTO coachrequest)
     {
         //var mail = EmailAddress.From(coachrequest.Email);
-        var coach = new Coach(coachrequest.Name, coachrequest.Email.ToString());
+        var coach = new Coach(coachrequest.Name, coachrequest.Email);
         _repository.SaveCoach(coach);
-        return Ok();
+        return Ok(coach.Id);
     }
 
 
-    [HttpGet("{id}")]
+    [HttpGet("/coaches/{id}")]
     public ActionResult<Coach> GetById(Guid id)
     {
         var coach = _repository.GetById(id);
