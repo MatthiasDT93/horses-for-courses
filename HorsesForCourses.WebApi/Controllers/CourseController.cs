@@ -47,7 +47,7 @@ public class CourseController : ControllerBase
         //var mail = EmailAddress.From(coachrequest.Email);
         var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
         _repository.SaveCourse(course);
-        return Ok(course);
+        return Ok(course.Id);
     }
 
     [HttpPost("/courses/{id}/skills")]
