@@ -28,20 +28,20 @@ public class CoachController : ControllerBase
     }
 
 
-    [HttpGet("{name}")]
-    public ActionResult<Coach> GetByName(string name)
+    [HttpGet("{id}")]
+    public ActionResult<Coach> GetById(Guid id)
     {
-        var coach = _repository.GetByName(name);
+        var coach = _repository.GetById(id);
         return coach is null ? NotFound() : Ok(coach);
     }
 
-    [HttpPost("/coaches/{name}/skills")]
-    public ActionResult ModifySkills(string name, [FromBody] ModifySkillDTO request)
+    [HttpPost("/coaches/{id}/skills")]
+    public ActionResult ModifySkills(Guid id, [FromBody] ModifySkillDTO request)
     {
-        var coach = _repository.GetByName(name);
+        var coach = _repository.GetById(id);
         if (coach == null)
         {
-            return NotFound($"Coach with name '{name}' not found.");
+            return NotFound($"Coach with id '{id}' not found.");
         }
 
         if (string.IsNullOrWhiteSpace(request.Skill))

@@ -17,8 +17,8 @@ public class InMemoryCoachRepository
         }
     }
 
-    public Coach? GetByName(string name)
+    public Coach? GetById(Guid id)
     {
-        return _coaches.FirstOrDefault(c => c.Name == name);
+        return _coaches.FirstOrDefault(c => c.Id == id);
     }
 }
