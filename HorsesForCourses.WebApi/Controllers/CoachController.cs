@@ -18,6 +18,13 @@ public class CoachController : ControllerBase
         _repository = repository;
     }
 
+    [HttpGet("/coaches/{id}")]
+    public ActionResult<Coach> GetById(Guid id)
+    {
+        var coach = _repository.GetById(id);
+        return coach is null ? NotFound() : Ok(coach);
+    }
+
     [HttpPost("/coaches")]
     public ActionResult<Guid> AddCoach([FromBody] CoachDTO coachrequest)
     {
@@ -27,16 +34,8 @@ public class CoachController : ControllerBase
         return Ok(coach.Id);
     }
 
-
-    [HttpGet("/coaches/{id}")]
-    public ActionResult<Coach> GetById(Guid id)
-    {
-        var coach = _repository.GetById(id);
-        return coach is null ? NotFound() : Ok(coach);
-    }
-
     [HttpPost("/coaches/{id}/skills")]
-    public ActionResult ModifySkills(Guid id, [FromBody] ModifySkillsDTO request)
+    public ActionResult ModifySkills(Guid id, [FromBody] ModifyCoachSkillsDTO request)
     {
         var coach = _repository.GetById(id);
         if (coach == null)
@@ -49,11 +48,11 @@ public class CoachController : ControllerBase
             return BadRequest("A minimum of one skill to either add or remove must be given.");
         }
 
-        foreach (var skill in request.SkillsToAdd)
+        foreach (var skill in request.SkillsToAdd.Distinct())
         {
             coach.AddCompetence(skill);
         }
-        foreach (var skill in request.SkillsToRemove)
+        foreach (var skill in request.SkillsToRemove.Distinct())
         {
             coach.RemoveCompetence(skill);
         }

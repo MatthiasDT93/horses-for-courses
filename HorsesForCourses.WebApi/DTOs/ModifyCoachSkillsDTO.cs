@@ -1,6 +1,6 @@
 namespace HorsesForCourses.WebApi;
 
-public class ModifySkillsDTO
+public class ModifyCoachSkillsDTO
 {
     public List<string> SkillsToAdd = new();
 

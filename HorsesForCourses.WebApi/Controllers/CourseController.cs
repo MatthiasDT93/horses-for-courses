@@ -17,8 +17,15 @@ public class CourseController : ControllerBase
         _repository = repository;
     }
 
+    [HttpGet("/courses/{id}")]
+    public ActionResult<Course> GetById(Guid id)
+    {
+        var course = _repository.GetById(id);
+        return course is null ? NotFound() : Ok(course);
+    }
+
     [HttpPost("/courses")]
-    public ActionResult<Course> AddCoach([FromBody] CourseDTO courserequest)
+    public ActionResult<Course> AddCourse([FromBody] CourseDTO courserequest)
     {
         //var mail = EmailAddress.From(coachrequest.Email);
         var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
@@ -26,4 +33,30 @@ public class CourseController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("/courses/{id}/skills")]
+    public ActionResult ModifySkills(Guid id, [FromBody] ModifyCourseSkillsDTO request)
+    {
+        var course = _repository.GetById(id);
+        if (course == null)
+        {
+            return NotFound($"Course with id '{id}' not found.");
+        }
+
+        if (request.SkillsToAdd.Count == 0 && request.SkillsToRemove.Count == 0)
+        {
+            return BadRequest("A minimum of one skill to either add or remove must be given.");
+        }
+
+        foreach (var skill in request.SkillsToAdd.Distinct())
+        {
+            course.AddRequirement(skill);
+        }
+        foreach (var skill in request.SkillsToRemove)
+        {
+            course.RemoveRequirement(skill);
+        }
+
+        _repository.SaveCourse(course);
+        return Ok();
+    }
 }

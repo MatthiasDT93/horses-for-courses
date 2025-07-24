@@ -17,8 +17,8 @@ public class InMemoryCourseRepository
         }
     }
 
-    public Course? GetByCourseName(string name)
+    public Course? GetById(Guid id)
     {
-        return _courses.FirstOrDefault(c => c.CourseName == name);
+        return _courses.FirstOrDefault(c => c.Id == id);
     }
 }
