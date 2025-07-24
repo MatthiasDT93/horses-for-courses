@@ -36,7 +36,7 @@ public class CoachController : ControllerBase
     }
 
     [HttpPost("/coaches/{id}/skills")]
-    public ActionResult ModifySkills(Guid id, [FromBody] ModifySkillDTO request)
+    public ActionResult ModifySkills(Guid id, [FromBody] ModifySkillsDTO request)
     {
         var coach = _repository.GetById(id);
         if (coach == null)
@@ -44,22 +44,20 @@ public class CoachController : ControllerBase
             return NotFound($"Coach with id '{id}' not found.");
         }
 
-        if (string.IsNullOrWhiteSpace(request.Skill))
+        if (request.SkillsToAdd.Count == 0 && request.SkillsToRemove.Count == 0)
         {
-            return BadRequest("Skill must be provided.");
+            return BadRequest("A minimum of one skill to either add or remove must be given.");
         }
 
-        switch (request.Action.ToLower())
+        foreach (var skill in request.SkillsToAdd)
         {
-            case "add":
-                coach.AddCompetence(request.Skill);
-                break;
-            case "remove":
-                coach.RemoveCompetence(request.Skill);
-                break;
-            default:
-                return BadRequest("invalid action: needs to be 'add' or 'remove'");
+            coach.AddCompetence(skill);
         }
+        foreach (var skill in request.SkillsToRemove)
+        {
+            coach.RemoveCompetence(skill);
+        }
+
         _repository.SaveCoach(coach);
         return Ok();
     }
