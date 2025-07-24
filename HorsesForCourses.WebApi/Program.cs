@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<InMemoryCoachRepository>();
+builder.Services.AddSingleton<InMemoryCourseRepository>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -48,23 +49,23 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseExceptionHandler(appBuilder =>
-{
-    appBuilder.Run(async context =>
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "application/problem+json";
+// app.UseExceptionHandler(appBuilder =>
+// {
+//     appBuilder.Run(async context =>
+//     {
+//         context.Response.StatusCode = 500;
+//         context.Response.ContentType = "application/problem+json";
 
-        var problem = new ProblemDetails
-        {
-            Title = "Er is een fout opgetreden",
-            Status = 500,
-            Detail = "Er ging iets mis tijdens het verwerken van je verzoek."
-        };
+//         var problem = new ProblemDetails
+//         {
+//             Title = "Er is een fout opgetreden",
+//             Status = 500,
+//             Detail = "Er ging iets mis tijdens het verwerken van je verzoek."
+//         };
 
-        await context.Response.WriteAsJsonAsync(problem);
-    });
-});
+//         await context.Response.WriteAsJsonAsync(problem);
+//     });
+// });
 
 app.MapControllers();
 

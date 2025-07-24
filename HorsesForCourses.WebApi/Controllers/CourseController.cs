@@ -30,11 +30,11 @@ public class CourseController : ControllerBase
         //var mail = EmailAddress.From(coachrequest.Email);
         var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
         _repository.SaveCourse(course);
-        return Ok();
+        return Ok(course);
     }
 
     [HttpPost("/courses/{id}/skills")]
-    public ActionResult ModifySkills(Guid id, [FromBody] ModifyCourseSkillsDTO request)
+    public ActionResult ModifySkills([FromBody] ModifyCourseSkillsDTO request, Guid id)
     {
         var course = _repository.GetById(id);
         if (course == null)

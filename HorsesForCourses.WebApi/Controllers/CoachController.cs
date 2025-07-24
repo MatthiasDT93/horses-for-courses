@@ -35,7 +35,7 @@ public class CoachController : ControllerBase
     }
 
     [HttpPost("/coaches/{id}/skills")]
-    public ActionResult ModifySkills(Guid id, [FromBody] ModifyCoachSkillsDTO request)
+    public ActionResult ModifySkills([FromBody] ModifyCoachSkillsDTO request, Guid id)
     {
         var coach = _repository.GetById(id);
         if (coach == null)
