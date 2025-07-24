@@ -27,6 +27,20 @@ public class CourseController : ControllerBase
         return course is null ? NotFound() : Ok(course);
     }
 
+    [HttpGet("/courses")]
+    public ActionResult<List<Course>> GetAll()
+    {
+        if (_repository.Courses.Count == 0) { return NotFound(); }
+
+        List<Course> result = new();
+        foreach (var course in _repository.Courses)
+        {
+            result.Add(course);
+        }
+
+        return Ok(result);
+    }
+
     [HttpPost("/courses")]
     public ActionResult<Course> AddCourse([FromBody] CourseDTO courserequest)
     {

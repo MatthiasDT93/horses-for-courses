@@ -25,6 +25,20 @@ public class CoachController : ControllerBase
         return coach is null ? NotFound() : Ok(coach);
     }
 
+    [HttpGet("/coaches")]
+    public ActionResult<List<Coach>> GetAll()
+    {
+        if (_repository.Coaches.Count == 0) { return NotFound(); }
+
+        List<Coach> result = new();
+        foreach (var coach in _repository.Coaches)
+        {
+            result.Add(coach);
+        }
+
+        return Ok(result);
+    }
+
     [HttpPost("/coaches")]
     public ActionResult<Guid> AddCoach([FromBody] CoachDTO coachrequest)
     {

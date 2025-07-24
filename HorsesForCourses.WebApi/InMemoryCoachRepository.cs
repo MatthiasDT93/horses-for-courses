@@ -4,6 +4,8 @@ public class InMemoryCoachRepository
 {
     private readonly List<Coach> _coaches = new();
 
+    public IReadOnlyList<Coach> Coaches => _coaches;
+
     public void SaveCoach(Coach coach)
     {
         int index = _coaches.FindIndex(c => c.Id == coach.Id);

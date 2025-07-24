@@ -4,6 +4,8 @@ public class InMemoryCourseRepository
 {
     private readonly List<Course> _courses = new();
 
+    public IReadOnlyList<Course> Courses => _courses;
+
     public void SaveCourse(Course course)
     {
         int index = _courses.FindIndex(c => c.Id == course.Id);
