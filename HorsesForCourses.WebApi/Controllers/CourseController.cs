@@ -59,4 +59,28 @@ public class CourseController : ControllerBase
         _repository.SaveCourse(course);
         return Ok();
     }
+
+
+    [HttpPost("/courses/{id}/timeslots")]
+    public ActionResult ModifyTimeSlots([FromBody] ModifyTimeSlotsDTO request, Guid id)
+    {
+        var course = _repository.GetById(id);
+        if (course == null)
+        {
+            return NotFound($"Course with id '{id}' not found.");
+        }
+
+
+        foreach (var slot in request.TimeSlotsToAdd.Distinct())
+        {
+            course.AddCourseMoment(slot);
+        }
+        foreach (var slot in request.TimeSlotsToRemove.Distinct())
+        {
+            course.RemoveCourseMoment(slot);
+        }
+
+        _repository.SaveCourse(course);
+        return Ok();
+    }
 }
