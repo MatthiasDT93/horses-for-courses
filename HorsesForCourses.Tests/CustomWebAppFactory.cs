@@ -1,7 +1,8 @@
-// using System.IO;
-// using Microsoft.AspNetCore.Mvc.Testing;
-// using Microsoft.Extensions.Hosting;
+using System.IO;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Hosting;
+using HorsesForCourses.WebApi;
 
-// namespace HorsesForCourses.Tests;
+namespace HorsesForCourses.Tests;
 
-// public class CustomWebAppFactory : WebApplicationFactory<Program> { }
+internal class CustomWebAppFactory : WebApplicationFactory<Program> { }
