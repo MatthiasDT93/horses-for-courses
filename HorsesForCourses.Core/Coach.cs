@@ -4,6 +4,7 @@ namespace HorsesForCourses.Core;
 
 public class Coach
 {
+    public Guid Id { get; private set; }
     private List<string> Competencies = new();
 
     public IReadOnlyList<string> competencies => Competencies;
@@ -21,6 +22,7 @@ public class Coach
     {
         Name = name;
         Email = EmailAddress.From(mail);
+        Id = Guid.NewGuid();
     }
 
     public void AddCompetence(string comp)

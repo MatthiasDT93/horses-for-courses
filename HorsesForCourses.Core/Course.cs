@@ -9,6 +9,7 @@ public enum States
 
 public class Course
 {
+    public Guid Id { get; private set; }
     public string CourseName { get; set; }
 
     private States Status;
@@ -32,6 +33,7 @@ public class Course
         coach = null;
         StartDate = start;
         EndDate = end;
+        Id = Guid.NewGuid();
     }
 
 
