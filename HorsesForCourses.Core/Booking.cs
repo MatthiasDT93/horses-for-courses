@@ -21,10 +21,10 @@ public record Booking
 
     private bool PeriodOverlap(Booking booking)
     {
-        return (booking.StartDate <= StartDate && booking.EndDate <= EndDate)
-            || (booking.StartDate >= StartDate && booking.EndDate <= EndDate)
-            || (booking.StartDate >= StartDate && booking.EndDate <= EndDate)
-            || (booking.StartDate <= StartDate && booking.EndDate >= EndDate);
+        return (booking.StartDate < StartDate && booking.EndDate > StartDate)
+            || (booking.StartDate > StartDate && booking.EndDate < EndDate)
+            || (booking.StartDate < EndDate && booking.EndDate > EndDate)
+            || (booking.StartDate == StartDate && booking.EndDate == EndDate);
     }
 
     private bool PlanningOverlap(Booking booking)
