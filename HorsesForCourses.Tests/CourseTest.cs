@@ -121,17 +121,21 @@ public class CourseTest
         coach.AddCompetence("CSS");
 
         var planning = new List<Timeslot> { slot };
+        var startdate3 = new DateOnly(2025, 8, 8);
+        var enddate3 = new DateOnly(2026, 8, 8);
 
-        coach.BookIn(planning);
+        var booking = Booking.From(planning, startdate3, enddate3);
+
+        coach.BookIn(booking);
         var exception3 = Assert.Throws<Exception>(() => course.AddCoach(coach));
-        Assert.Equal("The coach's schedule does not match the planning of the course.", exception3.Message);
+        Assert.Equal("Coach's schedule does not match with this planning.", exception3.Message);
 
         coach2.AddCompetence("Javascript");
         coach2.AddCompetence("HTML");
         coach2.AddCompetence("CSS");
 
         course.AddCoach(coach2);
-        Assert.Equal("Benny", course.coach.Name);
+        Assert.Equal("Benny", course.coach!.Name);
         //Assert.Equal(course.coach, coach);
     }
 

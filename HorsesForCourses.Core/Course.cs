@@ -96,10 +96,11 @@ public class Course
         {
             if (Status == States.PENDING) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
             if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
-            if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
+            //if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
 
             this.coach = coach;
-            coach.BookIn(Planning);
+            var newbooking = new Booking(Planning, StartDate, EndDate);
+            coach.BookIn(newbooking);
             Status = States.FINALISED;
         }
         else

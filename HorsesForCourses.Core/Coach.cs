@@ -9,9 +9,9 @@ public class Coach
 
     public IReadOnlyList<string> competencies => Competencies;
 
-    private List<Timeslot> Bookings = new();
+    private List<Booking> Bookings = new();
 
-    public IReadOnlyList<Timeslot> bookings => Bookings;
+    public IReadOnlyList<Booking> bookings => Bookings;
 
     public string Name { get; }
 
@@ -40,9 +40,9 @@ public class Coach
         if (!Competencies.Remove(comp)) { throw new Exception($"Coach {Name} does not have this competence."); }
     }
 
-    public void BookIn(List<Timeslot> planning)
+    public void BookIn(Booking newbooking)
     {
-        if (!Bookings.Any(booking => planning.Any(slot => slot.Overlap(booking)))) { Bookings.AddRange(planning); }
+        if (!Bookings.Any(booking => booking.BookingOverlap(newbooking))) { Bookings.Add(newbooking); }
         else throw new Exception("Coach's schedule does not match with this planning.");
     }
 
