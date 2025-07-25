@@ -24,7 +24,7 @@ public record Booking
         return (booking.StartDate <= StartDate && booking.EndDate <= EndDate)
             || (booking.StartDate >= StartDate && booking.EndDate <= EndDate)
             || (booking.StartDate >= StartDate && booking.EndDate <= EndDate)
-            || (booking.StartDate >= StartDate && booking.EndDate >= EndDate);
+            || (booking.StartDate <= StartDate && booking.EndDate >= EndDate);
     }
 
     private bool PlanningOverlap(Booking booking)
