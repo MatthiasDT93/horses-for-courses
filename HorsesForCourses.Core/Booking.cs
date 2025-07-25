@@ -24,6 +24,7 @@ public record Booking
         return (booking.StartDate < StartDate && booking.EndDate > StartDate)
             || (booking.StartDate > StartDate && booking.EndDate < EndDate)
             || (booking.StartDate < EndDate && booking.EndDate > EndDate)
+            || (booking.StartDate <= EndDate && booking.EndDate > StartDate)
             || (booking.StartDate == StartDate && booking.EndDate == EndDate);
     }
 
