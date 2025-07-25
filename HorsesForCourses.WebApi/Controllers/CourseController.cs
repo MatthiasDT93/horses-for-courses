@@ -68,7 +68,7 @@ public class CourseController : ControllerBase
         {
             course.AddRequirement(skill);
         }
-        foreach (var skill in request.SkillsToRemove)
+        foreach (var skill in request.SkillsToRemove.Distinct())
         {
             course.RemoveRequirement(skill);
         }
