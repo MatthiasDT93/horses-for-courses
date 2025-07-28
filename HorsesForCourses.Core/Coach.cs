@@ -46,13 +46,13 @@ public class Coach
         {
             throw new Exception("A minimum of one skill to either add or remove must be given.");
         }
-        foreach (var skill in toAdd.Distinct())
-        {
-            AddCompetence(skill);
-        }
         foreach (var skill in toRemove.Distinct())
         {
             RemoveCompetence(skill);
+        }
+        foreach (var skill in toAdd.Distinct())
+        {
+            AddCompetence(skill);
         }
     }
 

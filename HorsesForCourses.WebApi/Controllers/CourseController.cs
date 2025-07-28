@@ -75,7 +75,10 @@ public class CourseController : ControllerBase
             return NotFound($"Course with id '{id}' not found.");
         }
 
-        course.AdjustCourseMoment(request.TimeSlotsToAdd, request.TimeSlotsToRemove);
+        List<Timeslot> addings = request.TimeSlotsToAdd.Select(s => new Timeslot(s.Day, s.Start, s.End)).ToList();
+        List<Timeslot> removings = request.TimeSlotsToRemove.Select(s => new Timeslot(s.Day, s.Start, s.End)).ToList();
+
+        course.AdjustCourseMoment(addings, removings);
 
         _repository.SaveCourse(course);
         return Ok();

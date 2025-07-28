@@ -4,7 +4,7 @@ namespace HorsesForCourses.WebApi;
 
 public class ModifyTimeSlotsDTO
 {
-    public List<Timeslot> TimeSlotsToAdd { get; set; } = new();
+    public List<TimeSlotDTO> TimeSlotsToAdd { get; set; } = new();
 
-    public List<Timeslot> TimeSlotsToRemove { get; set; } = new();
+    public List<TimeSlotDTO> TimeSlotsToRemove { get; set; } = new();
 }

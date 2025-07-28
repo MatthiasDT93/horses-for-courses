@@ -66,14 +66,13 @@ public class Course
         {
             throw new Exception("A minimum of one skill to either add or remove must be given.");
         }
-
-        foreach (var skill in toAdd.Distinct())
-        {
-            AddRequirement(skill);
-        }
         foreach (var skill in toRemove.Distinct())
         {
             RemoveRequirement(skill);
+        }
+        foreach (var skill in toAdd.Distinct())
+        {
+            AddRequirement(skill);
         }
     }
 
