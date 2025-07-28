@@ -22,8 +22,7 @@ public class CoachController : ControllerBase
     public ActionResult<Coach> GetById(Guid id)
     {
         var coach = _repository.GetById(id);
-        var coachdto = new CoachDTO(coach.Name, coach.Email.ToString(), coach.competencies.ToList(), coach.bookings.ToList());
-        return coach is null ? NotFound() : Ok(coachdto);
+        return coach is null ? NotFound() : Ok(new CoachDTO(coach.Name, coach.Email.Value.ToString(), coach.competencies.ToList(), coach.bookings.ToList()));
     }
 
     [HttpGet("/coaches")]

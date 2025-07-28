@@ -24,7 +24,7 @@ public class CourseController : ControllerBase
     public ActionResult<Course> GetById(Guid id)
     {
         var course = _repository.GetById(id);
-        return course is null ? NotFound() : Ok(course);
+        return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning));
     }
 
     [HttpGet("/courses")]
@@ -32,10 +32,10 @@ public class CourseController : ControllerBase
     {
         if (_repository.Courses.Count == 0) { return NotFound(); }
 
-        List<Course> result = new();
+        List<CourseDTO> result = new();
         foreach (var course in _repository.Courses)
         {
-            result.Add(course);
+            result.Add(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning));
         }
 
         return Ok(result);
