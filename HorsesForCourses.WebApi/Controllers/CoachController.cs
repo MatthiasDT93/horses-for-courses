@@ -22,7 +22,8 @@ public class CoachController : ControllerBase
     public ActionResult<Coach> GetById(Guid id)
     {
         var coach = _repository.GetById(id);
-        return coach is null ? NotFound() : Ok(coach);
+        var coachdto = new CoachDTO(coach.Name, coach.Email.ToString(), coach.competencies.ToList(), coach.bookings.ToList());
+        return coach is null ? NotFound() : Ok(coachdto);
     }
 
     [HttpGet("/coaches")]
@@ -30,10 +31,11 @@ public class CoachController : ControllerBase
     {
         if (_repository.Coaches.Count == 0) { return NotFound(); }
 
-        List<Coach> result = new();
+        List<CoachDTO> result = new();
         foreach (var coach in _repository.Coaches)
         {
-            result.Add(coach);
+            var coachdto = new CoachDTO(coach.Name, coach.Email.ToString(), coach.competencies.ToList(), coach.bookings.ToList());
+            result.Add(coachdto);
         }
 
         return Ok(result);
