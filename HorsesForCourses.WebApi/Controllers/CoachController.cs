@@ -58,19 +58,7 @@ public class CoachController : ControllerBase
             return NotFound($"Coach with id '{id}' not found.");
         }
 
-        if (request.SkillsToAdd.Count == 0 && request.SkillsToRemove.Count == 0)
-        {
-            return BadRequest("A minimum of one skill to either add or remove must be given.");
-        }
-
-        foreach (var skill in request.SkillsToAdd.Distinct())
-        {
-            coach.AddCompetence(skill);
-        }
-        foreach (var skill in request.SkillsToRemove.Distinct())
-        {
-            coach.RemoveCompetence(skill);
-        }
+        coach.AdjustCompetences(request.SkillsToAdd, request.SkillsToRemove);
 
         _repository.SaveCoach(coach);
         return Ok();

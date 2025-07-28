@@ -59,19 +59,7 @@ public class CourseController : ControllerBase
             return NotFound($"Course with id '{id}' not found.");
         }
 
-        if (request.SkillsToAdd.Count == 0 && request.SkillsToRemove.Count == 0)
-        {
-            return BadRequest("A minimum of one skill to either add or remove must be given.");
-        }
-
-        foreach (var skill in request.SkillsToAdd.Distinct())
-        {
-            course.AddRequirement(skill);
-        }
-        foreach (var skill in request.SkillsToRemove.Distinct())
-        {
-            course.RemoveRequirement(skill);
-        }
+        course.AdjustRequirements(request.SkillsToAdd, request.SkillsToRemove);
 
         _repository.SaveCourse(course);
         return Ok();
@@ -87,16 +75,7 @@ public class CourseController : ControllerBase
             return NotFound($"Course with id '{id}' not found.");
         }
 
-        foreach (var slot in request.TimeSlotsToRemove.Distinct())
-        {
-            var mapslot = new Timeslot(slot.Day, slot.Start, slot.End);
-            course.RemoveCourseMoment(mapslot);
-        }
-        foreach (var slot in request.TimeSlotsToAdd.Distinct())
-        {
-            var mapslot = new Timeslot(slot.Day, slot.Start, slot.End);
-            course.AddCourseMoment(mapslot);
-        }
+        course.AdjustCourseMoment(request.TimeSlotsToAdd, request.TimeSlotsToRemove);
 
         _repository.SaveCourse(course);
         return Ok();

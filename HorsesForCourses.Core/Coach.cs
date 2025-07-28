@@ -40,6 +40,22 @@ public class Coach
         if (!Competencies.Remove(comp)) { throw new Exception($"Coach {Name} does not have this competence."); }
     }
 
+    public void AdjustCompetences(List<string> toAdd, List<string> toRemove)
+    {
+        if (toAdd.Count == 0 && toRemove.Count == 0)
+        {
+            throw new Exception("A minimum of one skill to either add or remove must be given.");
+        }
+        foreach (var skill in toAdd.Distinct())
+        {
+            AddCompetence(skill);
+        }
+        foreach (var skill in toRemove.Distinct())
+        {
+            RemoveCompetence(skill);
+        }
+    }
+
     public void BookIn(Booking newbooking)
     {
         if (!Bookings.Any(booking => booking.BookingOverlap(newbooking))) { Bookings.Add(newbooking); }
