@@ -101,6 +101,10 @@ public class Course
 
     public void AdjustCourseMoment(List<Timeslot> toAdd, List<Timeslot> toRemove)
     {
+        if (toAdd.Count == 0 && toRemove.Count == 0)
+        {
+            throw new Exception("A minimum of one skill to either add or remove must be given.");
+        }
         foreach (var slot in toRemove.Distinct())
         {
             RemoveCourseMoment(slot);
