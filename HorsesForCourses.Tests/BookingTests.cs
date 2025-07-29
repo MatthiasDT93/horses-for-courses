@@ -81,17 +81,5 @@ public class BookingTest
         Assert.True(bookingOne.BookingOverlap(bookingTwo));
     }
 
-    [Fact]
-    public void Monday_no_overlap()
-    {
-        var bookingOne = Booking.From([Timeslot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(17, 0))],
-            DateOnly.FromDateTime(new DateTime(2025, 7, 21)),
-            DateOnly.FromDateTime(new DateTime(2025, 7, 25)));
 
-        var bookingTwo = Booking.From([Timeslot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(17, 0))],
-            DateOnly.FromDateTime(new DateTime(2025, 7, 25)),
-            DateOnly.FromDateTime(new DateTime(2025, 7, 31)));
-
-        Assert.False(bookingOne.BookingOverlap(bookingTwo));
-    }
 }

@@ -40,7 +40,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("/courses")]
-    public ActionResult AddCourse([FromBody] CourseDTO courserequest)
+    public ActionResult<Guid> AddCourse([FromBody] CourseDTO courserequest)
     {
         //var mail = EmailAddress.From(coachrequest.Email);
         var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
