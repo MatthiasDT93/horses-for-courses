@@ -9,7 +9,7 @@ public class CoachDTO
     public List<string> Competencies { get; set; }
     public List<Booking> Bookings { get; set; }
 
-
+    public CoachDTO() { }
     public CoachDTO(string name, string mail, List<string> comp, List<Booking> bookings)
     {
         Name = name;
