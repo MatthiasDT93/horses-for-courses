@@ -62,18 +62,23 @@ public class Course
 
     public void AdjustRequirements(List<string> toAdd, List<string> toRemove)
     {
-        if (toAdd.Count == 0 && toRemove.Count == 0)
+        if (Status != States.FINALISED)
         {
-            throw new Exception("A minimum of one skill to either add or remove must be given.");
+            if (toAdd.Count == 0 && toRemove.Count == 0)
+            {
+                throw new Exception("A minimum of one skill to either add or remove must be given.");
+            }
+            foreach (var skill in toRemove.Distinct())
+            {
+                RemoveRequirement(skill);
+            }
+            foreach (var skill in toAdd.Distinct())
+            {
+                AddRequirement(skill);
+            }
         }
-        foreach (var skill in toRemove.Distinct())
-        {
-            RemoveRequirement(skill);
-        }
-        foreach (var skill in toAdd.Distinct())
-        {
-            AddRequirement(skill);
-        }
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void AddCourseMoment(Timeslot slot)
@@ -100,18 +105,23 @@ public class Course
 
     public void AdjustCourseMoment(List<Timeslot> toAdd, List<Timeslot> toRemove)
     {
-        if (toAdd.Count == 0 && toRemove.Count == 0)
+        if (Status != States.FINALISED)
         {
-            throw new Exception("A minimum of one skill to either add or remove must be given.");
+            if (toAdd.Count == 0 && toRemove.Count == 0)
+            {
+                throw new Exception("A minimum of one skill to either add or remove must be given.");
+            }
+            foreach (var slot in toRemove.Distinct())
+            {
+                RemoveCourseMoment(slot);
+            }
+            foreach (var slot in toAdd.Distinct())
+            {
+                AddCourseMoment(slot);
+            }
         }
-        foreach (var slot in toRemove.Distinct())
-        {
-            RemoveCourseMoment(slot);
-        }
-        foreach (var slot in toAdd.Distinct())
-        {
-            AddCourseMoment(slot);
-        }
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void ConfirmCourse()
