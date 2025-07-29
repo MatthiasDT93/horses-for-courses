@@ -53,5 +53,22 @@ public class CoachControllerTest
         Assert.Equivalent(newdto, okResult.Value);
     }
 
+    [Fact]
+    public void GetAll_Works_For_Coaches()
+    {
+        var dto1 = new CoachDTO("Mark", "mark@skynet.com", [], []);
+        var dto2 = new CoachDTO("Bob", "Bob@skynet.com", [], []);
 
+
+        controller.AddCoach(dto1);
+        controller.AddCoach(dto2);
+
+        var result = controller.GetAll();
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var list = Assert.IsType<List<CoachDTO>>(okResult.Value);
+        Assert.True(list.Count == 2);
+        Assert.Equal("Mark", list[0].Name);
+        Assert.Equal("Bob", list[1].Name);
+    }
 }

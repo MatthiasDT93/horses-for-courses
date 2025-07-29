@@ -23,7 +23,7 @@ public class CoachController : ControllerBase
     }
 
     [HttpGet("/coaches")]
-    public ActionResult<List<Coach>> GetAll()
+    public ActionResult<List<CoachDTO>> GetAll()
     {
         if (_repository.Coaches.Count == 0) { return NotFound(); }
 
