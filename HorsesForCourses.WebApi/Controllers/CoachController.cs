@@ -43,10 +43,7 @@ public class CoachController : ControllerBase
         //var mail = EmailAddress.From(coachrequest.Email);
         var coach = new Coach(coachrequest.Name, coachrequest.Email);
 
-        foreach (var competence in coachrequest.Competencies?.Distinct() ?? Enumerable.Empty<string>())
-        {
-            coach.AddCompetence(competence);
-        }
+        coach.AdjustCompetences(coachrequest.Competencies, []);
         foreach (var booking in coachrequest.Bookings?.Distinct() ?? Enumerable.Empty<Booking>())
         {
             coach.BookIn(booking);

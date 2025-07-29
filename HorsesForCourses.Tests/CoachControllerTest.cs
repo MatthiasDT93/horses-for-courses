@@ -22,7 +22,7 @@ public class CoachControllerTest
     [Fact]
     public void Adding_A_Coach_To_Repo_Works()
     {
-        var dto = new CoachDTO("Mark", "mark@skynet.com", [], []);
+        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
 
         var result = controller.AddCoach(dto);
 
@@ -36,7 +36,7 @@ public class CoachControllerTest
     [Fact]
     public void GetById_Works_For_Coaches()
     {
-        var dto = new CoachDTO("Mark", "mark@skynet.com", [], []);
+        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
         controller.AddCoach(dto);
         var coachid = repo.Coaches[0].Id;
         var coach = repo.Coaches[0];
@@ -56,8 +56,8 @@ public class CoachControllerTest
     [Fact]
     public void GetAll_Works_For_Coaches()
     {
-        var dto1 = new CoachDTO("Mark", "mark@skynet.com", [], []);
-        var dto2 = new CoachDTO("Bob", "Bob@skynet.com", [], []);
+        var dto1 = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
+        var dto2 = new CoachDTO("Bob", "Bob@skynet.com", ["cooking"], []);
 
 
         controller.AddCoach(dto1);
