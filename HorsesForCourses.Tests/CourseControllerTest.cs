@@ -37,7 +37,7 @@ public class CourseControllerTest
     public void GetById_Works_For_Courses()
     {
         var dto = new CourseDTO("cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-        var result = controller.AddCourse(dto);
+        controller.AddCourse(dto);
         var courseid = courserepo.Courses[0].Id;
         var course = courserepo.Courses[0];
 
@@ -51,5 +51,22 @@ public class CourseControllerTest
 
         var newdto = new CourseDTO(course.CourseName, course.StartDate, course.EndDate, ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
         Assert.Equivalent(newdto, okResult.Value);
+    }
+
+    [Fact]
+    public void GetAll_Works_For_Courses()
+    {
+        var dto1 = new CourseDTO("cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
+        var dto2 = new CourseDTO("cleaning 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cleaning"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(12, 0), new TimeOnly(13, 0))]);
+        controller.AddCourse(dto1);
+        controller.AddCourse(dto2);
+
+        var result = controller.GetAll();
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var list = Assert.IsType<List<CourseDTO>>(okResult.Value);
+        Assert.True(list.Count == 2);
+        Assert.Equal("cooking 101", list[0].Name);
+        Assert.Equal("cleaning 101", list[1].Name);
     }
 }
