@@ -72,7 +72,7 @@ public class CoachControllerTest
         Assert.Equal("Bob", list[1].Name);
     }
 
-    [Fact(Skip = "WIP")]
+    [Fact]
     public void Adding_And_Removing_Skills_To_A_Coach_Works()
     {
         var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking", "football"], []);
@@ -84,7 +84,18 @@ public class CoachControllerTest
         skillsdto.SkillsToRemove = ["cooking", "football"];
 
         var result = controller.ModifySkills(skillsdto, coachid);
-        Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(["C#", "Javascript"], repo.Coaches[0].competencies);
+
+        Assert.IsType<OkResult>(result);
+        // Safely unwrap ActionResult<CoachDTO>
+        var getResult = controller.GetById(coachid);
+        Assert.NotNull(getResult.Result); // Make sure it's not null
+
+        var okResult = getResult.Result as OkObjectResult;
+        Assert.NotNull(okResult); // Ensure we got a 200 OK
+
+        var updatedCoach = okResult.Value as CoachDTO;
+        Assert.NotNull(updatedCoach); // Ensure value exists
+
+        Assert.Equal(["C#", "JavaScript"], updatedCoach.Competencies);
     }
 }

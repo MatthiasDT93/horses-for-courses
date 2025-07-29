@@ -16,7 +16,7 @@ public class CoachController : ControllerBase
     }
 
     [HttpGet("/coaches/{id}")]
-    public ActionResult<Coach> GetById(Guid id)
+    public ActionResult<CoachDTO> GetById(Guid id)
     {
         var coach = _repository.GetById(id);
         return coach is null ? NotFound() : Ok(new CoachDTO(coach.Name, coach.Email.Value.ToString(), coach.competencies.ToList(), coach.bookings.ToList()));
@@ -42,6 +42,15 @@ public class CoachController : ControllerBase
     {
         //var mail = EmailAddress.From(coachrequest.Email);
         var coach = new Coach(coachrequest.Name, coachrequest.Email);
+
+        foreach (var competence in coachrequest.Competencies?.Distinct() ?? Enumerable.Empty<string>())
+        {
+            coach.AddCompetence(competence);
+        }
+        foreach (var booking in coachrequest.Bookings?.Distinct() ?? Enumerable.Empty<Booking>())
+        {
+            coach.BookIn(booking);
+        }
         _repository.SaveCoach(coach);
         return Ok(coach.Id);
     }
