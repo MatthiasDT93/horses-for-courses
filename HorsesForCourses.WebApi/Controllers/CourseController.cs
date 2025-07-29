@@ -8,14 +8,12 @@ namespace HorsesForCourses.WebApi.Controllers;
 public class CourseController : ControllerBase
 {
 
-    private readonly ILogger<CourseController> _logger;
     private readonly InMemoryCourseRepository _repository;
 
     private readonly InMemoryCoachRepository _coaches;
 
-    public CourseController(ILogger<CourseController> logger, InMemoryCourseRepository repository, InMemoryCoachRepository coaches)
+    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coaches)
     {
-        _logger = logger;
         _repository = repository;
         _coaches = coaches;
     }

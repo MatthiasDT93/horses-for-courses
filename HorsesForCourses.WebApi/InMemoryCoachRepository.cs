@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 
+
+
 public class InMemoryCoachRepository
 {
     private readonly List<Coach> _coaches = new();
