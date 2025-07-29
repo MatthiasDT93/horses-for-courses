@@ -109,7 +109,7 @@ public class Course
         {
             if (toAdd.Count == 0 && toRemove.Count == 0)
             {
-                throw new Exception("A minimum of one skill to either add or remove must be given.");
+                throw new Exception("A minimum of one timeslot to either add or remove must be given.");
             }
             foreach (var slot in toRemove.Distinct())
             {

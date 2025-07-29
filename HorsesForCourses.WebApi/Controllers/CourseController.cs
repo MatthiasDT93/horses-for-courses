@@ -44,6 +44,10 @@ public class CourseController : ControllerBase
     {
         //var mail = EmailAddress.From(coachrequest.Email);
         var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
+
+        List<Timeslot> timeslots = courserequest.Planning.Select(s => new Timeslot(s.Day, s.Start, s.End)).ToList();
+        course.AdjustCourseMoment(timeslots, []);
+        course.AdjustRequirements(courserequest.Requirements, []);
         _repository.SaveCourse(course);
         return Ok(course.Id);
     }
