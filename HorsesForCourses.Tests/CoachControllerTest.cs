@@ -71,4 +71,20 @@ public class CoachControllerTest
         Assert.Equal("Mark", list[0].Name);
         Assert.Equal("Bob", list[1].Name);
     }
+
+    [Fact(Skip = "WIP")]
+    public void Adding_And_Removing_Skills_To_A_Coach_Works()
+    {
+        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking", "football"], []);
+        controller.AddCoach(dto);
+        var coachid = repo.Coaches[0].Id;
+
+        var skillsdto = new ModifyCoachSkillsDTO();
+        skillsdto.SkillsToAdd = ["C#", "JavaScript"];
+        skillsdto.SkillsToRemove = ["cooking", "football"];
+
+        var result = controller.ModifySkills(skillsdto, coachid);
+        Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(["C#", "Javascript"], repo.Coaches[0].competencies);
+    }
 }
