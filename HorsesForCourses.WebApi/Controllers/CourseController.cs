@@ -19,14 +19,14 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("/courses/{id}")]
-    public ActionResult<Course> GetById(Guid id)
+    public ActionResult<CourseDTO> GetById(Guid id)
     {
         var course = _repository.GetById(id);
         return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning));
     }
 
     [HttpGet("/courses")]
-    public ActionResult<List<Course>> GetAll()
+    public ActionResult<List<CourseDTO>> GetAll()
     {
         if (_repository.Courses.Count == 0) { return NotFound(); }
 
@@ -40,7 +40,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("/courses")]
-    public ActionResult<Course> AddCourse([FromBody] CourseDTO courserequest)
+    public ActionResult AddCourse([FromBody] CourseDTO courserequest)
     {
         //var mail = EmailAddress.From(coachrequest.Email);
         var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);

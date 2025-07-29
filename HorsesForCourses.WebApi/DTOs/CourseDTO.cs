@@ -10,6 +10,8 @@ public class CourseDTO
     public List<string> Requirements { get; set; }
     public List<TimeSlotDTO> Planning { get; set; } = new();
 
+    public CourseDTO() { }
+
     public CourseDTO(string name, DateOnly start, DateOnly end, List<string> req, List<Timeslot> planning)
     {
         Name = name;
