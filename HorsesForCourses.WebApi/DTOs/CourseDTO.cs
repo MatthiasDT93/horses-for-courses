@@ -13,9 +13,8 @@ public class CourseDTO
 
     public CourseDTO() { }
 
-    public CourseDTO(int id, string name, DateOnly start, DateOnly end, List<string> req, List<TimeSlotDTO> planning)
+    public CourseDTO(string name, DateOnly start, DateOnly end, List<string> req, List<TimeSlotDTO> planning)
     {
-        Id = id;
         Name = name;
         Start = start;
         End = end;

@@ -27,8 +27,4 @@ public class InMemoryCourseRepository
         return _courses.FirstOrDefault(c => c.Id == id);
     }
 
-    public int GenerateNewId()
-    {
-        return nextid++;
-    }
 }

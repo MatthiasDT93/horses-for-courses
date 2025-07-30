@@ -24,7 +24,7 @@ public class CourseControllerTest
     [Fact]
     public void Adding_A_Course_Works()
     {
-        var dto = new CourseDTO("cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
+        var dto = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
         var result = controller.AddCourse(dto);
         var courseid = courserepo.Courses[0].Id;
 
@@ -36,7 +36,7 @@ public class CourseControllerTest
     [Fact]
     public void GetById_Works_For_Courses()
     {
-        var dto = new CourseDTO("cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
+        var dto = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
         controller.AddCourse(dto);
         var courseid = courserepo.Courses[0].Id;
         var course = courserepo.Courses[0];
@@ -56,8 +56,8 @@ public class CourseControllerTest
     [Fact]
     public void GetAll_Works_For_Courses()
     {
-        var dto1 = new CourseDTO("cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-        var dto2 = new CourseDTO("cleaning 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cleaning"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(12, 0), new TimeOnly(13, 0))]);
+        var dto1 = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
+        var dto2 = new CourseDTO(2,"cleaning 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cleaning"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(12, 0), new TimeOnly(13, 0))]);
         controller.AddCourse(dto1);
         controller.AddCourse(dto2);
 
@@ -73,7 +73,7 @@ public class CourseControllerTest
     [Fact]
     public void Modifying_Requirements_Of_A_Course_Works()
     {
-        var dto = new CourseDTO("cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking", "cutting vegetables"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
+        var dto = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking", "cutting vegetables"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
         controller.AddCourse(dto);
         var courseid = courserepo.Courses[0].Id;
         var course = courserepo.Courses[0];

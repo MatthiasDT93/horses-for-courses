@@ -14,8 +14,8 @@ public class CoachRequest
         Email = email;
     }
 
-    public static CoachDTO Request_To_DTO(CoachRequest request, int id)
+    public static CoachDTO Request_To_DTO(CoachRequest request)
     {
-        return new CoachDTO(id, request.Name, request.Email, [], []);
+        return new CoachDTO(request.Name, request.Email, [], []);
     }
 }

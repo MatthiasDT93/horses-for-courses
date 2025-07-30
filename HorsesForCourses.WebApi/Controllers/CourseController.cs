@@ -38,7 +38,7 @@ public class CourseController : ControllerBase
     [HttpPost("/courses")]
     public ActionResult<Guid> AddCourse([FromBody] CourseRequest courserequest)
     {
-        var dto = CourseRequest.Request_To_DTO(courserequest, _repository.GenerateNewId());
+        var dto = CourseRequest.Request_To_DTO(courserequest);
         var course = CourseDTOMapping.DTO_To_Course(dto);
         _repository.SaveCourse(course);
         return Ok(course.Id);

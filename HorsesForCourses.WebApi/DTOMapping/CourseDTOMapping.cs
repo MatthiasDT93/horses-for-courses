@@ -9,7 +9,6 @@ public class CourseDTOMapping
     {
         var timeslotlist = TimeslotDTOMapping.DTOList_To_TimeslotList(dto.Planning);
         var course = new Course(dto.Name, dto.Start, dto.End);
-        course.AssignId(dto.Id);
         course.OverWriteRequirements(dto.Requirements);
         course.OverWriteCourseMoment(timeslotlist);
 
@@ -19,7 +18,7 @@ public class CourseDTOMapping
     public static CourseDTO Course_To_DTO(Course course)
     {
         var dtotimeslots = TimeslotDTOMapping.TimeslotList_To_DTOList(course.Planning);
-        return new CourseDTO(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, dtotimeslots);
+        return new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, dtotimeslots);
     }
 
     public static List<Course> DTOList_To_CourseList(List<CourseDTO> dtolist)

@@ -11,9 +11,8 @@ public class CoachDTO
     public List<BookingDTO> Bookings { get; set; }
 
     public CoachDTO() { }
-    public CoachDTO(int id, string name, string mail, List<string> comp, List<BookingDTO> bookings)
+    public CoachDTO(string name, string mail, List<string> comp, List<BookingDTO> bookings)
     {
-        Id = id;
         Name = name;
         Email = mail;
         Competencies = comp;

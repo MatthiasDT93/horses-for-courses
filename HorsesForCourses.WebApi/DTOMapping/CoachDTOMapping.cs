@@ -10,7 +10,6 @@ public class CoachDTOMapping
     public static Coach DTO_To_Coach(CoachDTO dto)
     {
         var newcoach = new Coach(dto.Name, dto.Email);
-        newcoach.AssignId(dto.Id);
         newcoach.OverWriteCompetences(dto.Competencies);
         foreach (var bookingdto in dto.Bookings?.Distinct() ?? Enumerable.Empty<BookingDTO>())
         {
@@ -31,7 +30,7 @@ public class CoachDTOMapping
         {
             dtobookings.Add(BookingDTOMapping.Booking_To_DTO(booking));
         }
-        return new CoachDTO(coach.Id, coach.Name, coach.Email.Value, comp, dtobookings);
+        return new CoachDTO(coach.Name, coach.Email.Value, comp, dtobookings);
     }
 
     public static List<Coach> DTOList_To_CoachList(List<CoachDTO> dtolist)

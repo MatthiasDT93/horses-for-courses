@@ -28,9 +28,4 @@ public class InMemoryCoachRepository
     {
         return _coaches.FirstOrDefault(c => c.Id == id);
     }
-
-    public int GenerateNewId()
-    {
-        return nextid++;
-    }
 }

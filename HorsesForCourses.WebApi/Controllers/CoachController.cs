@@ -35,7 +35,7 @@ public class CoachController : ControllerBase
     [HttpPost("/coaches")]
     public ActionResult<int> AddCoach([FromBody] CoachRequest coachrequest)
     {
-        var dto = CoachRequest.Request_To_DTO(coachrequest, _repository.GenerateNewId());
+        var dto = CoachRequest.Request_To_DTO(coachrequest);
         var coach = CoachDTOMapping.DTO_To_Coach(dto);
         _repository.SaveCoach(coach);
         return Ok(coach.Id);

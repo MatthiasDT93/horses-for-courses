@@ -16,8 +16,8 @@ public class CourseRequest
         End = end;
     }
 
-    public static CourseDTO Request_To_DTO(CourseRequest request, int id)
+    public static CourseDTO Request_To_DTO(CourseRequest request)
     {
-        return new CourseDTO(id, request.Name, request.Start, request.End, [], []);
+        return new CourseDTO(request.Name, request.Start, request.End, [], []);
     }
 }
