@@ -11,7 +11,7 @@ public class CourseResponse
     public DateOnly enddate { get; set; }
     public List<string> Skills { get; set; } = [];
     public List<TimeSlotDTO> timeslots { get; set; } = [];
-    public Object coach { get; set; }
+    public Object? coach { get; set; }
 
     public CourseResponse(int id, string name, DateOnly start, DateOnly end, List<string> skills, List<Timeslot> slots, Coach c)
     {
@@ -24,6 +24,6 @@ public class CourseResponse
             Skills.Add(skill);
         }
         timeslots = TimeslotDTOMapping.TimeslotList_To_DTOList(slots);
-        coach = new { Id = c.Id, Name = c.Name };
+        coach = c != null ? new { Id = c.Id, Name = c.Name } : null;
     }
 }
