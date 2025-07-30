@@ -16,44 +16,33 @@ public class CoachController : ControllerBase
     }
 
     [HttpGet("/coaches/{id}")]
-    public ActionResult<CoachDTO> GetById(Guid id)
+    public ActionResult<CoachResponse> GetById(int id)
     {
         var coach = _repository.GetById(id);
-        return coach is null ? NotFound() : Ok(new CoachDTO(coach.Name, coach.Email.Value.ToString(), coach.competencies.ToList(), coach.bookings.ToList()));
+        return coach is null ? NotFound() : Ok(new CoachResponse(coach.Id, coach.Name, coach.Email.Value, coach.competencies, coach.Courses));
     }
 
     [HttpGet("/coaches")]
-    public ActionResult<List<CoachDTO>> GetAll()
+    public ActionResult<List<CoachListResponse>> GetAll()
     {
         if (_repository.Coaches.Count == 0) { return NotFound(); }
 
-        List<CoachDTO> result = new();
-        foreach (var coach in _repository.Coaches)
-        {
-            var coachdto = new CoachDTO(coach.Name, coach.Email.ToString(), coach.competencies.ToList(), coach.bookings.ToList());
-            result.Add(coachdto);
-        }
+        var result = CoachListResponse.ExtractResponse(_repository.Coaches);
 
         return Ok(result);
     }
 
     [HttpPost("/coaches")]
-    public ActionResult<Guid> AddCoach([FromBody] CoachDTO coachrequest)
+    public ActionResult<int> AddCoach([FromBody] CoachRequest coachrequest)
     {
-        //var mail = EmailAddress.From(coachrequest.Email);
-        var coach = new Coach(coachrequest.Name, coachrequest.Email);
-
-        coach.AdjustCompetences(coachrequest.Competencies, []);
-        foreach (var booking in coachrequest.Bookings?.Distinct() ?? Enumerable.Empty<Booking>())
-        {
-            coach.BookIn(booking);
-        }
+        var dto = CoachRequest.Request_To_DTO(coachrequest, _repository.GenerateNewId());
+        var coach = CoachDTOMapping.DTO_To_Coach(dto);
         _repository.SaveCoach(coach);
         return Ok(coach.Id);
     }
 
     [HttpPost("/coaches/{id}/skills")]
-    public ActionResult ModifySkills([FromBody] ModifyCoachSkillsDTO request, Guid id)
+    public ActionResult ModifySkills([FromBody] List<string> newskills, int id)
     {
         var coach = _repository.GetById(id);
         if (coach == null)
@@ -61,7 +50,7 @@ public class CoachController : ControllerBase
             return NotFound($"Coach with id '{id}' not found.");
         }
 
-        coach.AdjustCompetences(request.SkillsToAdd, request.SkillsToRemove);
+        coach.OverWriteCompetences(newskills);
 
         _repository.SaveCoach(coach);
         return Ok();

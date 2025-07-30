@@ -19,41 +19,33 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("/courses/{id}")]
-    public ActionResult<CourseDTO> GetById(Guid id)
+    public ActionResult<CourseResponse> GetById(int id)
     {
         var course = _repository.GetById(id);
-        return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning));
+        return course is null ? NotFound() : Ok(new CourseResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning, course.coach));
     }
 
     [HttpGet("/courses")]
-    public ActionResult<List<CourseDTO>> GetAll()
+    public ActionResult<List<CourseListResponse>> GetAll()
     {
         if (_repository.Courses.Count == 0) { return NotFound(); }
 
-        List<CourseDTO> result = new();
-        foreach (var course in _repository.Courses)
-        {
-            result.Add(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning));
-        }
+        var result = CourseListResponse.ExtractResponse(_repository.Courses);
 
         return Ok(result);
     }
 
     [HttpPost("/courses")]
-    public ActionResult<Guid> AddCourse([FromBody] CourseDTO courserequest)
+    public ActionResult<Guid> AddCourse([FromBody] CourseRequest courserequest)
     {
-        //var mail = EmailAddress.From(coachrequest.Email);
-        var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
-
-        List<Timeslot> timeslots = courserequest.Planning.Select(s => new Timeslot(s.Day, s.Start, s.End)).ToList();
-        course.AdjustCourseMoment(timeslots, []);
-        course.AdjustRequirements(courserequest.Requirements, []);
+        var dto = CourseRequest.Request_To_DTO(courserequest, _repository.GenerateNewId());
+        var course = CourseDTOMapping.DTO_To_Course(dto);
         _repository.SaveCourse(course);
         return Ok(course.Id);
     }
 
     [HttpPost("/courses/{id}/skills")]
-    public ActionResult ModifySkills([FromBody] ModifyCourseSkillsDTO request, Guid id)
+    public ActionResult ModifySkills([FromBody] List<string> newreqs, int id)
     {
         var course = _repository.GetById(id);
         if (course == null)
@@ -61,7 +53,7 @@ public class CourseController : ControllerBase
             return NotFound($"Course with id '{id}' not found.");
         }
 
-        course.AdjustRequirements(request.SkillsToAdd, request.SkillsToRemove);
+        course.OverWriteRequirements(newreqs);
 
         _repository.SaveCourse(course);
         return Ok();
@@ -69,7 +61,7 @@ public class CourseController : ControllerBase
 
 
     [HttpPost("/courses/{id}/timeslots")]
-    public ActionResult ModifyTimeSlots([FromBody] ModifyTimeSlotsDTO request, Guid id)
+    public ActionResult ModifyTimeSlots([FromBody] List<TimeSlotDTO> newslots, int id)
     {
         var course = _repository.GetById(id);
         if (course == null)
@@ -77,10 +69,8 @@ public class CourseController : ControllerBase
             return NotFound($"Course with id '{id}' not found.");
         }
 
-        List<Timeslot> addings = request.TimeSlotsToAdd.Select(s => new Timeslot(s.Day, s.Start, s.End)).ToList();
-        List<Timeslot> removings = request.TimeSlotsToRemove.Select(s => new Timeslot(s.Day, s.Start, s.End)).ToList();
-
-        course.AdjustCourseMoment(addings, removings);
+        var newnewslots = TimeslotDTOMapping.DTOList_To_TimeslotList(newslots);
+        course.OverWriteCourseMoment(newnewslots);
 
         _repository.SaveCourse(course);
         return Ok();
@@ -88,7 +78,7 @@ public class CourseController : ControllerBase
 
 
     [HttpPost("/courses/{id}/confirm")]
-    public ActionResult ConfirmCourse(Guid id)
+    public ActionResult ConfirmCourse(int id)
     {
         var course = _repository.GetById(id);
         if (course == null)
@@ -101,7 +91,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("/courses/{CourseId}/assign-coach")]
-    public ActionResult AssignCoach(Guid CourseId, Guid CoachId)
+    public ActionResult AssignCoach(int CourseId, int CoachId)
     {
         var course = _repository.GetById(CourseId);
         if (course == null)

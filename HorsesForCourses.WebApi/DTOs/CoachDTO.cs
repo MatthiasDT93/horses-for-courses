@@ -4,14 +4,16 @@ namespace HorsesForCourses.WebApi;
 
 public class CoachDTO
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public List<string> Competencies { get; set; }
-    public List<Booking> Bookings { get; set; }
+    public List<BookingDTO> Bookings { get; set; }
 
     public CoachDTO() { }
-    public CoachDTO(string name, string mail, List<string> comp, List<Booking> bookings)
+    public CoachDTO(int id, string name, string mail, List<string> comp, List<BookingDTO> bookings)
     {
+        Id = id;
         Name = name;
         Email = mail;
         Competencies = comp;

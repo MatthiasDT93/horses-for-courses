@@ -41,7 +41,7 @@ public class CourseControllerTest
         var courseid = courserepo.Courses[0].Id;
         var course = courserepo.Courses[0];
 
-        var newid = new Guid();
+        var newid = Math.Abs(Guid.NewGuid().GetHashCode());
 
         var faulty = controller.GetById(newid);
         var righty = controller.GetById(courseid);

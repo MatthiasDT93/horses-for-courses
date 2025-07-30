@@ -9,7 +9,7 @@ public enum States
 
 public class Course
 {
-    public Guid Id { get; private set; }
+    public int Id { get; private set; }
     public string CourseName { get; set; }
 
     private States Status;
@@ -33,10 +33,12 @@ public class Course
         coach = null;
         StartDate = start;
         EndDate = end;
-        Id = Guid.NewGuid();
     }
 
-
+    public void AssignId(int id)
+    {
+        Id = id;
+    }
 
     public void AddRequirement(string req)
     {
@@ -60,22 +62,12 @@ public class Course
             throw new Exception("Course has been finalised and cannot be altered.");
     }
 
-    public void AdjustRequirements(List<string> toAdd, List<string> toRemove)
+    public void OverWriteRequirements(List<string> newrequirements)
     {
         if (Status != States.FINALISED)
         {
-            if (toAdd.Count == 0 && toRemove.Count == 0)
-            {
-                throw new Exception("A minimum of one skill to either add or remove must be given.");
-            }
-            foreach (var skill in toRemove.Distinct())
-            {
-                RemoveRequirement(skill);
-            }
-            foreach (var skill in toAdd.Distinct())
-            {
-                AddRequirement(skill);
-            }
+            foreach (var req in RequiredCompetencies) { RemoveRequirement(req); }
+            foreach (var req in newrequirements) { AddRequirement(req); }
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");
@@ -103,22 +95,13 @@ public class Course
             throw new Exception("Course has been finalised and cannot be altered.");
     }
 
-    public void AdjustCourseMoment(List<Timeslot> toAdd, List<Timeslot> toRemove)
+
+    public void OverWriteCourseMoment(List<Timeslot> newtimeslots)
     {
         if (Status != States.FINALISED)
         {
-            if (toAdd.Count == 0 && toRemove.Count == 0)
-            {
-                throw new Exception("A minimum of one timeslot to either add or remove must be given.");
-            }
-            foreach (var slot in toRemove.Distinct())
-            {
-                RemoveCourseMoment(slot);
-            }
-            foreach (var slot in toAdd.Distinct())
-            {
-                AddCourseMoment(slot);
-            }
+            foreach (var slot in Planning) { RemoveCourseMoment(slot); }
+            foreach (var slot in newtimeslots) { AddCourseMoment(slot); }
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");
@@ -143,6 +126,7 @@ public class Course
             this.coach = coach;
             var newbooking = new Booking(Planning, StartDate, EndDate);
             coach.BookIn(newbooking);
+            coach.AddCourse(this);
             Status = States.FINALISED;
         }
         else

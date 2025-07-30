@@ -4,6 +4,7 @@ using HorsesForCourses.Core;
 
 public class InMemoryCoachRepository
 {
+    private int nextid = 1;
     private readonly List<Coach> _coaches = new();
 
     public IReadOnlyList<Coach> Coaches => _coaches;
@@ -17,12 +18,19 @@ public class InMemoryCoachRepository
         }
         else
         {
+            coach.AssignId(nextid);
             _coaches.Add(coach);
+            nextid++;
         }
     }
 
-    public Coach? GetById(Guid id)
+    public Coach? GetById(int id)
     {
         return _coaches.FirstOrDefault(c => c.Id == id);
+    }
+
+    public int GenerateNewId()
+    {
+        return nextid++;
     }
 }

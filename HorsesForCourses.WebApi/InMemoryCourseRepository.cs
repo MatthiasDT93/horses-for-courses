@@ -2,6 +2,7 @@ using HorsesForCourses.Core;
 
 public class InMemoryCourseRepository
 {
+    private int nextid = 1;
     private readonly List<Course> _courses = new();
 
     public IReadOnlyList<Course> Courses => _courses;
@@ -15,12 +16,19 @@ public class InMemoryCourseRepository
         }
         else
         {
+            course.AssignId(nextid);
             _courses.Add(course);
+            nextid++;
         }
     }
 
-    public Course? GetById(Guid id)
+    public Course? GetById(int id)
     {
         return _courses.FirstOrDefault(c => c.Id == id);
+    }
+
+    public int GenerateNewId()
+    {
+        return nextid++;
     }
 }

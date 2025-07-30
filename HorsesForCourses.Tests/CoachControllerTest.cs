@@ -41,7 +41,7 @@ public class CoachControllerTest
         var coachid = repo.Coaches[0].Id;
         var coach = repo.Coaches[0];
 
-        var newid = new Guid();
+        var newid = Math.Abs(Guid.NewGuid().GetHashCode());
 
         var faulty = controller.GetById(newid);
         var righty = controller.GetById(coachid);
@@ -56,8 +56,8 @@ public class CoachControllerTest
     [Fact]
     public void GetAll_Works_For_Coaches()
     {
-        var dto1 = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
-        var dto2 = new CoachDTO("Bob", "Bob@skynet.com", ["cooking"], []);
+        var dto1 = new CoachDTO(1, "Mark", "mark@skynet.com", ["cooking"], []);
+        var dto2 = new CoachDTO(2, "Bob", "Bob@skynet.com", ["cooking"], []);
 
 
         controller.AddCoach(dto1);

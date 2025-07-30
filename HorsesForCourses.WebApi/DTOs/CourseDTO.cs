@@ -4,6 +4,7 @@ namespace HorsesForCourses.WebApi;
 
 public class CourseDTO
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     public DateOnly Start { get; set; }
     public DateOnly End { get; set; }
@@ -12,16 +13,13 @@ public class CourseDTO
 
     public CourseDTO() { }
 
-    public CourseDTO(string name, DateOnly start, DateOnly end, List<string> req, List<Timeslot> planning)
+    public CourseDTO(int id, string name, DateOnly start, DateOnly end, List<string> req, List<TimeSlotDTO> planning)
     {
+        Id = id;
         Name = name;
         Start = start;
         End = end;
         Requirements = req;
-        foreach (var slot in planning)
-        {
-            var newslot = new TimeSlotDTO(slot.Day, slot.Start, slot.End);
-            Planning.Add(newslot);
-        }
+        Planning = planning;
     }
 }
