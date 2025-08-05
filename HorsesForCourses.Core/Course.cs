@@ -24,6 +24,7 @@ public class Course
 
     public Coach? coach;
 
+    public Course() { }
     public Course(string name, DateOnly start, DateOnly end)
     {
         CourseName = name;
@@ -66,8 +67,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            RequiredCompetencies = [];
-            foreach (var req in newrequirements) { AddRequirement(req); }
+            RequiredCompetencies = newrequirements;
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");

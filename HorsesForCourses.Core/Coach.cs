@@ -7,7 +7,7 @@ public class Coach
     public int Id { get; private set; }
     private List<string> Competencies = new();
 
-    public IReadOnlyList<string> competencies => Competencies;
+    public IReadOnlyList<string> competencies { get { return Competencies; } }
 
     private List<Booking> Bookings = new();
 
@@ -16,8 +16,9 @@ public class Coach
     public string Name { get; }
 
     public EmailAddress Email { get; }
-    public List<Course> Courses { get; private set; }
+    public List<Course> Courses { get; private set; } = new();
 
+    public Coach() { }
     public Coach(string name, string mail)
     {
         Name = name;
@@ -53,8 +54,7 @@ public class Coach
 
     public void OverWriteCompetences(List<string> newcompetences)
     {
-        foreach (var skill in competencies) { RemoveCompetence(skill); }
-        foreach (var skill in newcompetences) { AddCompetence(skill); }
+        Competencies = newcompetences;
     }
 
     public void BookIn(Booking newbooking)

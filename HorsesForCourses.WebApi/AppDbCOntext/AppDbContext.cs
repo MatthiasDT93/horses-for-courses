@@ -1,0 +1,147 @@
+using Microsoft.AspNetCore.Mvc;
+using HorsesForCourses.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using System.Text.Json;
+
+namespace HorsesForCourses.WebApi.Controllers;
+
+public class AppDbContext : DbContext
+{
+    public DbSet<Coach> Coaches => Set<Coach>();
+    public DbSet<Course> Courses => Set<Course>();
+
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // ========== COACH ==========
+        modelBuilder.Entity<Coach>(coach =>
+        {
+            coach.HasKey(c => c.Id);
+
+            coach.Property(c => c.Name).IsRequired();
+            coach.OwnsOne(c => c.Email, email =>
+            {
+                email.Property(e => e.Value).HasColumnName("Email").IsRequired();
+            });
+
+            // // Competencies (List<string>) as owned collection
+            // coach.OwnsMany(typeof(string), "Competencies", cb =>
+            // {
+            //     cb.WithOwner().HasForeignKey("CoachId");
+            //     cb.Property<string>("Value").HasColumnName("Competency");
+            //     cb.HasKey("CoachId", "Value");
+            //     cb.ToTable("CoachCompetencies");
+            // });
+
+            coach.Property<List<string>>("Competencies")
+                 .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
+
+            // Bookings as value objects
+            coach.OwnsMany(c => c.bookings, booking =>
+            {
+                booking.WithOwner().HasForeignKey("CoachId");
+
+                booking.Property(b => b.StartDate);
+                booking.Property(b => b.EndDate);
+
+                // Timeslot list inside Booking
+                booking.OwnsMany(b => b.Planning, ts =>
+                {
+                    ts.WithOwner().HasForeignKey("CoachId", "StartDate", "EndDate");
+
+                    ts.Property(t => t.Day)
+                        .HasConversion(
+                            v => v.ToString(),
+                            v => Enum.Parse<DayOfWeek>(v))
+                        .HasColumnName("Day");
+
+                    ts.Property(t => t.Start).HasColumnName("Start");
+                    ts.Property(t => t.End).HasColumnName("End");
+
+                    ts.HasKey("CoachId", "StartDate", "EndDate", "Day", "Start", "End");
+                    ts.ToTable("BookingTimeslots");
+                });
+
+                booking.HasKey("CoachId", "StartDate", "EndDate");
+                booking.ToTable("CoachBookings");
+            });
+
+            coach.ToTable("Coaches");
+        });
+
+        // ========== COURSE ==========
+        modelBuilder.Entity<Course>(course =>
+        {
+            course.HasKey(c => c.Id);
+
+            course.Property(c => c.CourseName).IsRequired();
+            course.Property(nameof(Course.StartDate));
+            course.Property(nameof(Course.EndDate));
+
+            // Status enum stored as string
+            course.Property<States>("Status")
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (States)Enum.Parse(typeof(States), v))
+                .HasColumnName("Status");
+
+            // Optional Coach FK
+            course.HasOne(typeof(Coach), nameof(Course.coach))
+                .WithMany()
+                .HasForeignKey("CoachId")
+                .IsRequired(false);
+
+            // Planning as Timeslots
+            course.OwnsMany(c => c.Planning, ts =>
+            {
+                ts.WithOwner().HasForeignKey("CourseId");
+
+                ts.Property(t => t.Day)
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => Enum.Parse<DayOfWeek>(v))
+                    .HasColumnName("Day");
+
+                ts.Property(t => t.Start).HasColumnName("Start");
+                ts.Property(t => t.End).HasColumnName("End");
+
+                ts.HasKey("CourseId", "Day", "Start", "End");
+                ts.ToTable("CourseTimeslots");
+            });
+
+            // // Required Competencies (List<string>)
+            // course.OwnsMany(c => c.RequiredCompetencies, rc =>
+            // {
+            //     rc.WithOwner().HasForeignKey("CourseId");
+            //     rc.Property<string>("Competency").HasColumnName("Competency");
+            //     rc.HasKey("CourseId", "Competency");
+            //     rc.ToTable("CourseCompetencies");
+            // });
+
+            course.Property(c => c.RequiredCompetencies)
+                 .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
+
+            course.ToTable("Courses");
+        });
+    }
+}
+
+
+public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+{
+    public AppDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+        optionsBuilder.UseSqlite("Data Source=horsesforcourses.db"); // Or your connection string
+
+        return new AppDbContext(optionsBuilder.Options);
+    }
+}

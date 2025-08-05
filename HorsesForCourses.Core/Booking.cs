@@ -8,7 +8,7 @@ public record Booking
 
     public DateOnly EndDate { get; set; }
 
-
+    public Booking() { }
     public Booking(List<Timeslot> planning, DateOnly startdate, DateOnly enddate) { Planning = planning; StartDate = startdate; EndDate = enddate; }
 
 
