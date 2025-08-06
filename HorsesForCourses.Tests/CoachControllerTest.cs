@@ -17,16 +17,17 @@ public class CoachControllerTest
     public CoachControllerTest()
     {
         repo = new();
+
         controller = new CoachController(repo, context);
     }
 
 
     [Fact]
-    public void Adding_A_Coach_To_Repo_Works()
+    public async void Adding_A_Coach_To_Repo_Works()
     {
-        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
+        var request = new CoachRequest("Mark", "mark@skynet.com");
 
-        var result = controller.AddCoach(dto);
+        var result = await controller.AddCoach(request);
 
         var coachid = repo.Coaches[0].Id;
 
@@ -38,8 +39,8 @@ public class CoachControllerTest
     [Fact]
     public void GetById_Works_For_Coaches()
     {
-        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
-        controller.AddCoach(dto);
+        var request = new CoachRequest("Mark", "mark@skynet.com");
+        controller.AddCoach(request);
         var coachid = repo.Coaches[0].Id;
         var coach = repo.Coaches[0];
 

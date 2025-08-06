@@ -28,15 +28,7 @@ public class AppDbContext : DbContext
                 email.Property(e => e.Value).HasColumnName("Email").IsRequired();
             });
 
-            // // Competencies (List<string>) as owned collection
-            // coach.OwnsMany(typeof(string), "Competencies", cb =>
-            // {
-            //     cb.WithOwner().HasForeignKey("CoachId");
-            //     cb.Property<string>("Value").HasColumnName("Competency");
-            //     cb.HasKey("CoachId", "Value");
-            //     cb.ToTable("CoachCompetencies");
-            // });
-
+            // Competencies (List<string>) as owned collection
             coach.Property<List<string>>("Competencies")
                  .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
@@ -92,8 +84,8 @@ public class AppDbContext : DbContext
                 .HasColumnName("Status");
 
             // Optional Coach FK
-            course.HasOne(typeof(Coach), nameof(Course.coach))
-                .WithMany()
+            course.HasOne(c => c.coach)
+                .WithMany(c => c.Courses)
                 .HasForeignKey("CoachId")
                 .IsRequired(false);
 
@@ -115,15 +107,7 @@ public class AppDbContext : DbContext
                 ts.ToTable("CourseTimeslots");
             });
 
-            // // Required Competencies (List<string>)
-            // course.OwnsMany(c => c.RequiredCompetencies, rc =>
-            // {
-            //     rc.WithOwner().HasForeignKey("CourseId");
-            //     rc.Property<string>("Competency").HasColumnName("Competency");
-            //     rc.HasKey("CourseId", "Competency");
-            //     rc.ToTable("CourseCompetencies");
-            // });
-
+            // Required Competencies (List<string>)
             course.Property(c => c.RequiredCompetencies)
                  .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
