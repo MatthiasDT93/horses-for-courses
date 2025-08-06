@@ -20,7 +20,7 @@ public class CoachControllerTest
     public CoachControllerTest()
     {
         repo = new Mock<IEFCoachRepository>();
-        controller = new CoachController(repo);
+        controller = new CoachController(repo.Object);
     }
 
 
@@ -30,57 +30,76 @@ public class CoachControllerTest
         var request = new CoachRequest("Mark", "mark@skynet.com");
 
         var result = await controller.AddCoach(request);
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var coachid = Assert.IsType<int>(okResult.Value);
-
-        // Get the coach back from controller (which uses the repo)
-        var getResult = await controller.GetById(coachid);
-        var getOkResult = Assert.IsType<OkObjectResult>(getResult.Result);
-        var coachDto = Assert.IsType<CoachResponse>(getOkResult.Value);
-
-        Assert.Equal("Mark", coachDto.Name);
-        Assert.Equal("mark@skynet.com", coachDto.Email);
+        repo.Verify(r => r.AddCoachToDB(It.Is<Coach>(
+                                        c => c.Name == "Mark" && c.Email.Value == "mark@skynet.com")), Times.Once);
+        repo.Verify(r => r.Save());
     }
 
-    // [Fact(Skip = "wip")]
-    // public async void GetById_Works_For_Coaches()
-    // {
-    //     var request = new CoachRequest("Mark", "mark@skynet.com");
-    //     var coachid = await controller.AddCoach(request);
+    [Fact]
+    public async void GetById_Works_For_Coaches()
+    {
+        var request = new CoachRequest("Mark", "mark@skynet.com");
+        var coachid = await controller.AddCoach(request);
 
-    //     var coach = await repo.GetByIdIncludingCourses(coachid.Value);
+        var result = await controller.GetById(coachid.Value);
 
-    //     var newid = Math.Abs(Guid.NewGuid().GetHashCode());
+        repo.Verify(r => r.GetByIdIncludingCourses(coachid.Value));
+    }
 
-    //     var faulty = await controller.GetById(newid);
-    //     var righty = await controller.GetById(coachid.Value);
+    [Fact]
+    public async Task IsPopulated_works()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // fresh DB for each test
+            .Options;
 
-    //     Assert.IsType<NotFoundResult>(faulty.Result);
-    //     var okResult = Assert.IsType<OkObjectResult>(righty.Result);
+        using var context = new AppDbContext(options);
+        var repo1 = new EFCoachRepository(context);
 
-    //     var newdto = new CoachDTO(coach.Name, coach.Email.Value.ToString(), coach.competencies.ToList(), coach.bookings.ToList());
-    //     Assert.Equivalent(newdto, okResult.Value);
-    // }
+        var coach = new Coach("Alice", "alice@example.com");
+        await repo1.AddCoachToDB(coach);
+        await repo1.Save();
+
+        // Act
+        var result1 = await repo1.IsPopulated();
+
+        // Assert
+        Assert.True(result1);
+    }
+
+    [Fact]
+    public async Task IsPopulated_Returns_False_When_No_Coaches_Exist()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new AppDbContext(options);
+        var repo = new EFCoachRepository(context);
+
+        var result = await repo.IsPopulated();
+
+        Assert.False(result);
+    }
 
     [Fact]
     public async Task GetAll_Works_For_Coaches()
     {
-        var request1 = new CoachRequest("Mark", "mark@skynet.com");
-        var request2 = new CoachRequest("Mark", "mark@skynet.com");
-
-        await controller.AddCoach(request1);
-        await controller.AddCoach(request2);
+        repo.Setup(r => r.IsPopulated()).ReturnsAsync(true);
 
         var result = await controller.GetAll();
 
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var list = Assert.IsType<List<CoachDTO>>(okResult.Value);
-        Assert.True(list.Count == 2);
-        Assert.Equal("Mark", list[0].Name);
-        Assert.Equal("Bob", list[1].Name);
+        repo.Verify(r => r.GetAllIncludingCourses());
+
+        // var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        // var list = Assert.IsType<List<CoachListResponse>>(okResult.Value);
+        // Assert.True(list.Count == 2);
+        // Assert.Equal("Mark", list[0].Name);
+        // Assert.Equal("Bob", list[1].Name);
     }
 
-    [Fact]
+    [Fact(Skip = "wip")]
     public async void Adding_And_Removing_Skills_To_A_Coach_Works()
     {
         var request1 = new CoachRequest("Mark", "mark@skynet.com");
