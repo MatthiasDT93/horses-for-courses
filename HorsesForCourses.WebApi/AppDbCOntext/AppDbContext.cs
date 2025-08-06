@@ -39,13 +39,16 @@ public class AppDbContext : DbContext
             {
                 booking.WithOwner().HasForeignKey("CoachId");
 
+                booking.Property<int>("Id"); // shadow property
+                booking.HasKey("Id");
+
                 booking.Property(b => b.StartDate);
                 booking.Property(b => b.EndDate);
 
                 // Timeslot list inside Booking
                 booking.OwnsMany(b => b.Planning, ts =>
                 {
-                    ts.WithOwner().HasForeignKey("CoachId", "StartDate", "EndDate");
+                    ts.WithOwner().HasForeignKey("BookingId");
 
                     ts.Property(t => t.Day)
                         .HasConversion(
@@ -56,11 +59,10 @@ public class AppDbContext : DbContext
                     ts.Property(t => t.Start).HasColumnName("Start");
                     ts.Property(t => t.End).HasColumnName("End");
 
-                    ts.HasKey("CoachId", "StartDate", "EndDate", "Day", "Start", "End");
+                    ts.HasKey("BookingId", "Day", "Start", "End");
                     ts.ToTable("BookingTimeslots");
                 });
 
-                booking.HasKey("CoachId", "StartDate", "EndDate");
                 booking.ToTable("CoachBookings");
             });
 

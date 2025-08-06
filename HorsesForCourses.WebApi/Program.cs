@@ -27,8 +27,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=horsesforcourses.db"));
 
-builder.Services.AddSingleton<InMemoryCoachRepository>();
-builder.Services.AddSingleton<InMemoryCourseRepository>();
+builder.Services.AddScoped<EFCoachRepository>();
+builder.Services.AddScoped<EFCourseRepository>();
 
 builder.Services.AddSwaggerGen(options =>
 {

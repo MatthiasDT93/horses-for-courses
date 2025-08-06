@@ -9,13 +9,13 @@ namespace HorsesForCourses.WebApi.Controllers;
 public class CourseController : ControllerBase
 {
 
-    private readonly InMemoryCourseRepository _repository;
+    private readonly EFCourseRepository _repository;
 
-    private readonly InMemoryCoachRepository _coaches;
+    private readonly EFCoachRepository _coaches;
 
     private readonly AppDbContext _context;
 
-    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coaches, AppDbContext context)
+    public CourseController(EFCourseRepository repository, EFCoachRepository coaches, AppDbContext context)
     {
         _repository = repository;
         _coaches = coaches;
@@ -25,19 +25,15 @@ public class CourseController : ControllerBase
     [HttpGet("/courses/{id}")]
     public async Task<ActionResult<CourseResponse>> GetById(int id)
     {
-        var course = await _context.Courses
-                            .Include(c => c.coach)
-                            .FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _repository.GetByIdIncludingCoach(id);
         return course is null ? NotFound() : Ok(new CourseResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning, course.coach));
     }
 
     [HttpGet("/courses")]
     public async Task<ActionResult<List<CourseListResponse>>> GetAll()
     {
-        if (!await _context.Courses.AnyAsync()) { return NotFound(); }
-        var list = await _context.Courses
-                            .Include(c => c.coach)
-                            .ToListAsync();
+        if (!await _repository.IsPopulated()) { return NotFound(); }
+        var list = await _repository.GetAllIncludingCoach();
         var result = CourseListResponse.ExtractResponse(list);
 
         return Ok(result);
@@ -48,22 +44,15 @@ public class CourseController : ControllerBase
     {
         var dto = CourseRequest.Request_To_DTO(courserequest);
         var course = CourseDTOMapping.DTO_To_Course(dto);
-        var lastId = await _context.Courses
-                            .OrderByDescending(x => x.Id)
-                            .Select(x => x.Id)
-                            .FirstOrDefaultAsync();
-        course.AssignId(lastId + 1);
-        _context.Courses.Add(course);
-        await _context.SaveChangesAsync();
+        await _repository.AddCourseToDB(course);
+        await _repository.Save();
         return Ok(course.Id);
     }
 
     [HttpPost("/courses/{id}/skills")]
     public async Task<ActionResult> ModifySkills([FromBody] List<string> newreqs, int id)
     {
-        var course = await _context.Courses
-                            .Include(c => c.coach)
-                            .FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _repository.GetByIdIncludingCoach(id);
         if (course == null)
         {
             return NotFound($"Course with id '{id}' not found.");
@@ -71,7 +60,7 @@ public class CourseController : ControllerBase
 
         course.OverWriteRequirements(newreqs);
 
-        await _context.SaveChangesAsync();
+        await _repository.Save();
         return Ok();
     }
 
@@ -79,9 +68,7 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/timeslots")]
     public async Task<ActionResult> ModifyTimeSlots([FromBody] List<TimeSlotDTO> newslots, int id)
     {
-        var course = await _context.Courses
-                            .Include(c => c.coach)
-                            .FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _repository.GetByIdIncludingCoach(id);
         if (course == null)
         {
             return NotFound($"Course with id '{id}' not found.");
@@ -90,7 +77,7 @@ public class CourseController : ControllerBase
         var newnewslots = TimeslotDTOMapping.DTOList_To_TimeslotList(newslots);
         course.OverWriteCourseMoment(newnewslots);
 
-        await _context.SaveChangesAsync();
+        await _repository.Save();
         return Ok();
     }
 
@@ -98,9 +85,7 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/confirm")]
     public async Task<ActionResult> ConfirmCourse(int id)
     {
-        var course = await _context.Courses
-                            .Include(c => c.coach)
-                            .FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _repository.GetByIdIncludingCoach(id);
         if (course == null)
         {
             return NotFound($"Course with id '{id}' not found.");
@@ -108,24 +93,20 @@ public class CourseController : ControllerBase
 
         course.ConfirmCourse();
 
-        await _context.SaveChangesAsync();
+        await _repository.Save();
         return Ok();
     }
 
     [HttpPost("/courses/{CourseId}/assign-coach")]
     public async Task<ActionResult> AssignCoach(int CourseId, int CoachId)
     {
-        var course = await _context.Courses
-                            .Include(c => c.coach)
-                            .FirstOrDefaultAsync(c => c.Id == CourseId);
+        var course = await _repository.GetByIdIncludingCoach(CourseId);
         if (course == null)
         {
             return NotFound($"Course with id '{CourseId}' not found.");
         }
 
-        var coach = await _context.Coaches
-                            .Include(c => c.Courses)
-                            .FirstOrDefaultAsync(c => c.Id == CoachId);
+        var coach = await _coaches.GetByIdIncludingCourses(CoachId);
         if (coach == null)
         {
             return NotFound($"Coach with id '{CoachId}' not found.");
@@ -133,7 +114,7 @@ public class CourseController : ControllerBase
 
         course.AddCoach(coach);
 
-        await _context.SaveChangesAsync();
+        await _repository.Save();
         return Ok();
     }
 }

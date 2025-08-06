@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HorsesForCourses.WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250806081801_SecondaryCreate")]
-    partial class SecondaryCreate
+    [Migration("20250806104326_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,16 +96,22 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.OwnsMany("HorsesForCourses.Core.Booking", "bookings", b1 =>
                         {
-                            b1.Property<int>("CoachId")
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<DateOnly>("StartDate")
-                                .HasColumnType("TEXT");
+                            b1.Property<int>("CoachId")
+                                .HasColumnType("INTEGER");
 
                             b1.Property<DateOnly>("EndDate")
                                 .HasColumnType("TEXT");
 
-                            b1.HasKey("CoachId", "StartDate", "EndDate");
+                            b1.Property<DateOnly>("StartDate")
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("CoachId");
 
                             b1.ToTable("CoachBookings", (string)null);
 
@@ -114,14 +120,8 @@ namespace HorsesForCourses.WebApi.Migrations
 
                             b1.OwnsMany("HorsesForCourses.Core.Timeslot", "Planning", b2 =>
                                 {
-                                    b2.Property<int>("CoachId")
+                                    b2.Property<int>("BookingId")
                                         .HasColumnType("INTEGER");
-
-                                    b2.Property<DateOnly>("StartDate")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<DateOnly>("EndDate")
-                                        .HasColumnType("TEXT");
 
                                     b2.Property<string>("Day")
                                         .HasColumnType("TEXT")
@@ -135,12 +135,12 @@ namespace HorsesForCourses.WebApi.Migrations
                                         .HasColumnType("TEXT")
                                         .HasColumnName("End");
 
-                                    b2.HasKey("CoachId", "StartDate", "EndDate", "Day", "Start", "End");
+                                    b2.HasKey("BookingId", "Day", "Start", "End");
 
                                     b2.ToTable("BookingTimeslots", (string)null);
 
                                     b2.WithOwner()
-                                        .HasForeignKey("CoachId", "StartDate", "EndDate");
+                                        .HasForeignKey("BookingId");
                                 });
 
                             b1.Navigation("Planning");

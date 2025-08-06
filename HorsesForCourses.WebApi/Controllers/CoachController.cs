@@ -9,10 +9,10 @@ namespace HorsesForCourses.WebApi.Controllers;
 public class CoachController : ControllerBase
 {
 
-    private readonly InMemoryCoachRepository _repository;
+    private readonly EFCoachRepository _repository;
     private readonly AppDbContext _context;
 
-    public CoachController(InMemoryCoachRepository repository, AppDbContext context)
+    public CoachController(EFCoachRepository repository, AppDbContext context)
     {
         _repository = repository;
         _context = context;
@@ -21,19 +21,15 @@ public class CoachController : ControllerBase
     [HttpGet("/coaches/{id}")]
     public async Task<ActionResult<CoachResponse>> GetById(int id)
     {
-        var coach = await _context.Coaches
-                            .Include(c => c.Courses)
-                            .FirstOrDefaultAsync(c => c.Id == id);
+        var coach = await _repository.GetByIdIncludingCourses(id);
         return coach is null ? NotFound() : Ok(new CoachResponse(coach.Id, coach.Name, coach.Email.Value, coach.competencies, coach.Courses));
     }
 
     [HttpGet("/coaches")]
     public async Task<ActionResult<List<CoachListResponse>>> GetAll()
     {
-        if (!await _context.Coaches.AnyAsync()) { return NotFound(); }
-        var list = await _context.Coaches
-                            .Include(c => c.Courses)
-                            .ToListAsync();
+        if (!await _repository.IsPopulated()) { return NotFound(); }
+        var list = await _repository.GetAllIncludingCourses();
         var result = CoachListResponse.ExtractResponse(list);
 
         return Ok(result);
@@ -44,22 +40,15 @@ public class CoachController : ControllerBase
     {
         var dto = CoachRequest.Request_To_DTO(coachrequest);
         var coach = CoachDTOMapping.DTO_To_Coach(dto);
-        var lastId = await _context.Coaches
-                            .OrderByDescending(x => x.Id)
-                            .Select(x => x.Id)
-                            .FirstOrDefaultAsync();
-        coach.AssignId(lastId + 1);
-        _context.Coaches.Add(coach);
-        await _context.SaveChangesAsync();
+        await _repository.AddCoachToDB(coach);
+        await _repository.Save();
         return Ok(coach.Id);
     }
 
     [HttpPost("/coaches/{id}/skills")]
     public async Task<ActionResult> ModifySkills([FromBody] List<string> newskills, int id)
     {
-        var coach = await _context.Coaches
-                            .Include(c => c.Courses)
-                            .FirstOrDefaultAsync(c => c.Id == id);
+        var coach = await _repository.GetByIdIncludingCourses(id);
         if (coach == null)
         {
             return NotFound($"Coach with id '{id}' not found.");
@@ -67,7 +56,7 @@ public class CoachController : ControllerBase
 
         coach.OverWriteCompetences(newskills);
 
-        await _context.SaveChangesAsync();
+        await _repository.Save();
         return Ok();
     }
 }
