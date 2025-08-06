@@ -2,7 +2,16 @@ using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.Controllers;
 using Microsoft.EntityFrameworkCore;
 
-public class EFCourseRepository
+public interface IEFCourseRepository
+{
+    Task AddCourseToDB(Course course);
+    Task<List<Course>> GetAllIncludingCoach();
+    Task<Course?> GetByIdIncludingCoach(int id);
+    Task<bool> IsPopulated();
+    Task Save();
+}
+
+public class EFCourseRepository : IEFCourseRepository
 {
     private readonly AppDbContext _context;
 

@@ -9,17 +9,15 @@ namespace HorsesForCourses.WebApi.Controllers;
 public class CourseController : ControllerBase
 {
 
-    private readonly EFCourseRepository _repository;
+    private readonly IEFCourseRepository _repository;
 
-    private readonly EFCoachRepository _coaches;
+    private readonly IEFCoachRepository _coaches;
 
-    private readonly AppDbContext _context;
 
-    public CourseController(EFCourseRepository repository, EFCoachRepository coaches, AppDbContext context)
+    public CourseController(IEFCourseRepository repository, IEFCoachRepository coaches)
     {
         _repository = repository;
         _coaches = coaches;
-        _context = context;
     }
 
     [HttpGet("/courses/{id}")]

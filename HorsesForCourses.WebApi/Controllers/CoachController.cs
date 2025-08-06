@@ -9,13 +9,11 @@ namespace HorsesForCourses.WebApi.Controllers;
 public class CoachController : ControllerBase
 {
 
-    private readonly EFCoachRepository _repository;
-    private readonly AppDbContext _context;
+    private readonly IEFCoachRepository _repository;
 
-    public CoachController(EFCoachRepository repository, AppDbContext context)
+    public CoachController(IEFCoachRepository repository)
     {
         _repository = repository;
-        _context = context;
     }
 
     [HttpGet("/coaches/{id}")]
