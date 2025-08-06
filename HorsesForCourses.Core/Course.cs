@@ -22,7 +22,7 @@ public class Course
 
     public DateOnly EndDate { get; }
 
-    public Coach? coach;
+    public Coach? coach { get; private set; }
 
     public Course() { }
     public Course(string name, DateOnly start, DateOnly end)

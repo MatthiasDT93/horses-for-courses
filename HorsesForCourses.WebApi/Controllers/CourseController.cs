@@ -25,7 +25,9 @@ public class CourseController : ControllerBase
     [HttpGet("/courses/{id}")]
     public async Task<ActionResult<CourseResponse>> GetById(int id)
     {
-        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _context.Courses
+                            .Include(c => c.coach)
+                            .FirstOrDefaultAsync(c => c.Id == id);
         return course is null ? NotFound() : Ok(new CourseResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning, course.coach));
     }
 
@@ -33,7 +35,9 @@ public class CourseController : ControllerBase
     public async Task<ActionResult<List<CourseListResponse>>> GetAll()
     {
         if (!await _context.Courses.AnyAsync()) { return NotFound(); }
-        var list = await _context.Courses.ToListAsync();
+        var list = await _context.Courses
+                            .Include(c => c.coach)
+                            .ToListAsync();
         var result = CourseListResponse.ExtractResponse(list);
 
         return Ok(result);
@@ -57,7 +61,9 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/skills")]
     public async Task<ActionResult> ModifySkills([FromBody] List<string> newreqs, int id)
     {
-        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _context.Courses
+                            .Include(c => c.coach)
+                            .FirstOrDefaultAsync(c => c.Id == id);
         if (course == null)
         {
             return NotFound($"Course with id '{id}' not found.");
@@ -73,7 +79,9 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/timeslots")]
     public async Task<ActionResult> ModifyTimeSlots([FromBody] List<TimeSlotDTO> newslots, int id)
     {
-        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _context.Courses
+                            .Include(c => c.coach)
+                            .FirstOrDefaultAsync(c => c.Id == id);
         if (course == null)
         {
             return NotFound($"Course with id '{id}' not found.");
@@ -90,7 +98,9 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/confirm")]
     public async Task<ActionResult> ConfirmCourse(int id)
     {
-        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        var course = await _context.Courses
+                            .Include(c => c.coach)
+                            .FirstOrDefaultAsync(c => c.Id == id);
         if (course == null)
         {
             return NotFound($"Course with id '{id}' not found.");
@@ -105,13 +115,17 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{CourseId}/assign-coach")]
     public async Task<ActionResult> AssignCoach(int CourseId, int CoachId)
     {
-        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == CourseId);
+        var course = await _context.Courses
+                            .Include(c => c.coach)
+                            .FirstOrDefaultAsync(c => c.Id == CourseId);
         if (course == null)
         {
             return NotFound($"Course with id '{CourseId}' not found.");
         }
 
-        var coach = await _context.Coaches.FirstOrDefaultAsync(c => c.Id == CoachId);
+        var coach = await _context.Coaches
+                            .Include(c => c.Courses)
+                            .FirstOrDefaultAsync(c => c.Id == CoachId);
         if (coach == null)
         {
             return NotFound($"Coach with id '{CoachId}' not found.");

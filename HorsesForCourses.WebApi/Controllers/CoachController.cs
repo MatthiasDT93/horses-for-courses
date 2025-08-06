@@ -21,7 +21,9 @@ public class CoachController : ControllerBase
     [HttpGet("/coaches/{id}")]
     public async Task<ActionResult<CoachResponse>> GetById(int id)
     {
-        var coach = await _context.Coaches.FirstOrDefaultAsync(c => c.Id == id);
+        var coach = await _context.Coaches
+                            .Include(c => c.Courses)
+                            .FirstOrDefaultAsync(c => c.Id == id);
         return coach is null ? NotFound() : Ok(new CoachResponse(coach.Id, coach.Name, coach.Email.Value, coach.competencies, coach.Courses));
     }
 
@@ -29,7 +31,9 @@ public class CoachController : ControllerBase
     public async Task<ActionResult<List<CoachListResponse>>> GetAll()
     {
         if (!await _context.Coaches.AnyAsync()) { return NotFound(); }
-        var list = await _context.Coaches.ToListAsync();
+        var list = await _context.Coaches
+                            .Include(c => c.Courses)
+                            .ToListAsync();
         var result = CoachListResponse.ExtractResponse(list);
 
         return Ok(result);
@@ -53,7 +57,9 @@ public class CoachController : ControllerBase
     [HttpPost("/coaches/{id}/skills")]
     public async Task<ActionResult> ModifySkills([FromBody] List<string> newskills, int id)
     {
-        var coach = await _context.Coaches.FirstOrDefaultAsync(c => c.Id == id);
+        var coach = await _context.Coaches
+                            .Include(c => c.Courses)
+                            .FirstOrDefaultAsync(c => c.Id == id);
         if (coach == null)
         {
             return NotFound($"Coach with id '{id}' not found.");

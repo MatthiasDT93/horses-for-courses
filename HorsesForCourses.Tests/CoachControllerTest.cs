@@ -10,19 +10,21 @@ public class CoachControllerTest
 {
     public InMemoryCoachRepository repo { get; set; }
 
+    public AppDbContext context { get; set; }
+
     public CoachController controller { get; set; }
 
     public CoachControllerTest()
     {
         repo = new();
-        controller = new CoachController(repo);
+        controller = new CoachController(repo, context);
     }
 
 
     [Fact]
     public void Adding_A_Coach_To_Repo_Works()
     {
-        var dto = new CoachDTO(1,"Mark", "mark@skynet.com", ["cooking"], []);
+        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
 
         var result = controller.AddCoach(dto);
 
@@ -36,7 +38,7 @@ public class CoachControllerTest
     [Fact]
     public void GetById_Works_For_Coaches()
     {
-        var dto = new CoachDTO(1,"Mark", "mark@skynet.com", ["cooking"], []);
+        var dto = new CoachDTO("Mark", "mark@skynet.com", ["cooking"], []);
         controller.AddCoach(dto);
         var coachid = repo.Coaches[0].Id;
         var coach = repo.Coaches[0];
@@ -75,7 +77,7 @@ public class CoachControllerTest
     [Fact]
     public void Adding_And_Removing_Skills_To_A_Coach_Works()
     {
-        var dto = new CoachDTO(1,"Mark", "mark@skynet.com", ["cooking", "football"], []);
+        var dto = new CoachDTO(1, "Mark", "mark@skynet.com", ["cooking", "football"], []);
         controller.AddCoach(dto);
         var coachid = repo.Coaches[0].Id;
 
