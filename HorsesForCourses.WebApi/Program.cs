@@ -7,6 +7,7 @@ using HorsesForCourses.WebApi.Controllers;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using HorsesForCourses.WebApi;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IEFCoachRepository, EFCoachRepository>();
 builder.Services.AddScoped<IEFCourseRepository, EFCourseRepository>();
+
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 
 builder.Services.AddSwaggerGen(options =>
 {

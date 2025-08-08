@@ -8,12 +8,13 @@ namespace HorsesForCourses.WebApi.Controllers;
 [Route("/coaches")]
 public class CoachController : ControllerBase
 {
-
+    private readonly IUnitOfWork _uow;
     private readonly IEFCoachRepository _repository;
 
-    public CoachController(IEFCoachRepository repository)
+    public CoachController(IEFCoachRepository repository, IUnitOfWork uow)
     {
         _repository = repository;
+        _uow = uow;
     }
 
     [HttpGet("/coaches/{id}")]
@@ -39,7 +40,7 @@ public class CoachController : ControllerBase
         var dto = CoachRequest.Request_To_DTO(coachrequest);
         var coach = CoachDTOMapping.DTO_To_Coach(dto);
         await _repository.AddCoachToDB(coach);
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok(coach.Id);
     }
 
@@ -54,7 +55,7 @@ public class CoachController : ControllerBase
 
         coach.OverWriteCompetences(newskills);
 
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok();
     }
 }

@@ -8,16 +8,17 @@ namespace HorsesForCourses.WebApi.Controllers;
 [Route("/courses")]
 public class CourseController : ControllerBase
 {
-
+    private readonly IUnitOfWork _uow;
     private readonly IEFCourseRepository _repository;
 
     private readonly IEFCoachRepository _coaches;
 
 
-    public CourseController(IEFCourseRepository repository, IEFCoachRepository coaches)
+    public CourseController(IEFCourseRepository repository, IEFCoachRepository coaches, IUnitOfWork uow)
     {
         _repository = repository;
         _coaches = coaches;
+        _uow = uow;
     }
 
     [HttpGet("/courses/{id}")]
@@ -43,7 +44,7 @@ public class CourseController : ControllerBase
         var dto = CourseRequest.Request_To_DTO(courserequest);
         var course = CourseDTOMapping.DTO_To_Course(dto);
         await _repository.AddCourseToDB(course);
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok(course.Id);
     }
 
@@ -58,7 +59,7 @@ public class CourseController : ControllerBase
 
         course.OverWriteRequirements(newreqs);
 
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok();
     }
 
@@ -75,7 +76,7 @@ public class CourseController : ControllerBase
         var newnewslots = TimeslotDTOMapping.DTOList_To_TimeslotList(newslots);
         course.OverWriteCourseMoment(newnewslots);
 
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok();
     }
 
@@ -91,7 +92,7 @@ public class CourseController : ControllerBase
 
         course.ConfirmCourse();
 
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok();
     }
 
@@ -112,7 +113,7 @@ public class CourseController : ControllerBase
 
         course.AddCoach(coach);
 
-        await _repository.Save();
+        await _uow.SaveChangesAsync();
         return Ok();
     }
 }
