@@ -121,4 +121,60 @@ public class CourseControllerTest
         Assert.Contains("C#", course.RequiredCompetencies);
         Assert.Contains("JavaScript", course.RequiredCompetencies);
     }
+
+    [Fact]
+    public async void Adding_And_Removing_Timeslots_To_A_Course_Works()
+    {
+        var slot1 = Timeslot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0));
+        var slot2 = Timeslot.From(DayOfWeek.Monday, new TimeOnly(12, 0), new TimeOnly(14, 0));
+        List<Timeslot> newslots = [slot1, slot2];
+        var dtolist = TimeslotDTOMapping.TimeslotList_To_DTOList(newslots);
+        var course = new Course("C#", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
+
+        repo.Setup(r => r.GetByIdIncludingCoach(1)).ReturnsAsync(course);
+
+        var result = await controller.ModifyTimeSlots(dtolist, 1);
+
+        repo.Verify(r => r.GetByIdIncludingCoach(1));
+        Assert.Contains(slot1, course.Planning);
+        Assert.Contains(slot2, course.Planning);
+    }
+
+    [Fact]
+    public async void Confirming_A_Course_Works()
+    {
+        var course = new Course("C#", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
+        var coach = new Coach("Mark", "mark@skynet.com");
+        coach.AddCompetence("C#");
+        course.AddCourseMoment(Timeslot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0)));
+        course.AddRequirement("C#");
+
+        repo.Setup(r => r.GetByIdIncludingCoach(1)).ReturnsAsync(course);
+        var result = await controller.ConfirmCourse(1);
+        repo.Verify(r => r.GetByIdIncludingCoach(1));
+
+        course.AddCoach(coach);
+
+        var exception2 = Assert.Throws<Exception>(() => course.ConfirmCourse());
+        Assert.Equal("Cannot confirm a course that's not in the PENDING state, current state is: FINALISED.", exception2.Message);
+
+    }
+
+    [Fact]
+    public async void Adding_A_Coach_To_A_Course_Works()
+    {
+        var course = new Course("C#", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
+        var coach = new Coach("Mark", "mark@skynet.com");
+        coach.AddCompetence("C#");
+        course.AddCourseMoment(Timeslot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0)));
+        course.AddRequirement("C#");
+
+        repo.Setup(r => r.GetByIdIncludingCoach(1)).ReturnsAsync(course);
+        var result = await controller.ConfirmCourse(1);
+        repo.Verify(r => r.GetByIdIncludingCoach(1));
+
+        course.AddCoach(coach);
+
+        Assert.Equal(coach, course.coach);
+    }
 }
