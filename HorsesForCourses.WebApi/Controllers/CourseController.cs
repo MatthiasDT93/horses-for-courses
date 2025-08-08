@@ -25,7 +25,7 @@ public class CourseController : ControllerBase
     public async Task<ActionResult<CourseResponse>> GetById(int id)
     {
         var course = await _repository.GetByIdIncludingCoach(id);
-        return course is null ? NotFound() : Ok(new CourseResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning, course.coach));
+        return course is null ? NotFound() : Ok(new CourseResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning, course.coach!));
     }
 
     [HttpGet("/courses")]

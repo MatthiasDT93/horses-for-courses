@@ -1,100 +1,124 @@
+using Microsoft.AspNetCore.Mvc;
+using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.Controllers;
+using Xunit.Sdk;
+using HorsesForCourses.WebApi;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+
+namespace HorsesForCourses.Tests;
+
+public class CourseControllerTest
+{
+    private readonly Mock<IEFCourseRepository> repo;
+    private readonly Mock<IEFCoachRepository> coachrepo;
+
+    private readonly Mock<IUnitOfWork> uow;
 
 
-// using HorsesForCourses.Core;
-// using HorsesForCourses.WebApi;
-// using HorsesForCourses.WebApi.Controllers;
-// using Microsoft.AspNetCore.Mvc;
-// namespace HorsesForCourses.Tests;
+    public CourseController controller { get; set; }
 
-// public class CourseControllerTest
-// {
-//     public InMemoryCourseRepository courserepo { get; set; }
-//     public InMemoryCoachRepository coachrepo { get; set; }
+    public CourseControllerTest()
+    {
+        repo = new Mock<IEFCourseRepository>();
+        coachrepo = new Mock<IEFCoachRepository>();
+        uow = new Mock<IUnitOfWork>();
 
-//     public CourseController controller { get; set; }
+        uow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
 
-//     public CourseControllerTest()
-//     {
-//         courserepo = new();
-//         coachrepo = new();
-//         controller = new CourseController(courserepo, coachrepo);
-//     }
+        controller = new CourseController(repo.Object, coachrepo.Object, uow.Object);
+    }
 
 
-//     [Fact]
-//     public void Adding_A_Course_Works()
-//     {
-//         var dto = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-//         var result = controller.AddCourse(dto);
-//         var courseid = courserepo.Courses[0].Id;
+    [Fact]
+    public async void Adding_A_Course_To_Repo_Works()
+    {
+        var request = new CourseRequest("C# 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
 
-//         Assert.Single(courserepo.Courses);
-//         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-//         Assert.Equal(courseid, okResult.Value);
-//     }
+        var result = await controller.AddCourse(request);
+        repo.Verify(r => r.AddCourseToDB(It.Is<Course>(
+                                        c => c.CourseName == "C# 101" && c.StartDate == new DateOnly(2025, 8, 8) && c.EndDate == new DateOnly(2026, 8, 8))), Times.Once);
+        uow.Verify(r => r.SaveChangesAsync());
+    }
 
-//     [Fact]
-//     public void GetById_Works_For_Courses()
-//     {
-//         var dto = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-//         controller.AddCourse(dto);
-//         var courseid = courserepo.Courses[0].Id;
-//         var course = courserepo.Courses[0];
+    [Fact]
+    public async void GetById_Works_For_Courses()
+    {
+        var request = new CourseRequest("C# 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
+        var courseid = await controller.AddCourse(request);
 
-//         var newid = Math.Abs(Guid.NewGuid().GetHashCode());
+        var result = await controller.GetById(courseid.Value);
 
-//         var faulty = controller.GetById(newid);
-//         var righty = controller.GetById(courseid);
+        repo.Verify(r => r.GetByIdIncludingCoach(courseid.Value));
+    }
 
-//         Assert.IsType<NotFoundResult>(faulty.Result);
-//         var okResult = Assert.IsType<OkObjectResult>(righty.Result);
+    [Fact]
+    public async Task IsPopulated_works()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // fresh DB for each test
+            .Options;
 
-//         var newdto = new CourseDTO(course.CourseName, course.StartDate, course.EndDate, ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-//         Assert.Equivalent(newdto, okResult.Value);
-//     }
+        using var context = new AppDbContext(options);
+        var repo1 = new EFCoachRepository(context);
+        var repo2 = new EFCourseRepository(context);
+        var uow = new EfUnitOfWork(context, repo1, repo2);
 
-//     [Fact]
-//     public void GetAll_Works_For_Courses()
-//     {
-//         var dto1 = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-//         var dto2 = new CourseDTO(2,"cleaning 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cleaning"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(12, 0), new TimeOnly(13, 0))]);
-//         controller.AddCourse(dto1);
-//         controller.AddCourse(dto2);
+        var course = new Course("C# 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
+        await repo2.AddCourseToDB(course);
+        await uow.SaveChangesAsync();
 
-//         var result = controller.GetAll();
+        // Act
+        var result1 = await repo2.IsPopulated();
 
-//         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-//         var list = Assert.IsType<List<CourseDTO>>(okResult.Value);
-//         Assert.True(list.Count == 2);
-//         Assert.Equal("cooking 101", list[0].Name);
-//         Assert.Equal("cleaning 101", list[1].Name);
-//     }
+        // Assert
+        Assert.True(result1);
+    }
 
-//     [Fact]
-//     public void Modifying_Requirements_Of_A_Course_Works()
-//     {
-//         var dto = new CourseDTO(1,"cooking 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8), ["cooking", "cutting vegetables"], [new Timeslot(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0))]);
-//         controller.AddCourse(dto);
-//         var courseid = courserepo.Courses[0].Id;
-//         var course = courserepo.Courses[0];
+    [Fact]
+    public async Task IsPopulated_Returns_False_When_No_Coures_Exist()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
 
-//         var skillsdto = new ModifyCourseSkillsDTO();
-//         skillsdto.SkillsToAdd = ["C#", "JavaScript"];
-//         skillsdto.SkillsToRemove = ["cooking", "cutting vegetables"];
+        using var context = new AppDbContext(options);
+        var repo = new EFCoachRepository(context);
+        var repo2 = new EFCourseRepository(context);
+        var uow = new EfUnitOfWork(context, repo, repo2);
 
-//         var result = controller.ModifySkills(skillsdto, courseid);
+        var result = await repo.IsPopulated();
 
-//         Assert.IsType<OkResult>(result);
-//         // Safely unwrap ActionResult<CoachDTO>
-//         var getResult = controller.GetById(courseid);
-//         Assert.NotNull(getResult.Result); // Make sure it's not null
+        Assert.False(result);
+    }
 
-//         var okResult = getResult.Result as OkObjectResult;
-//         Assert.NotNull(okResult); // Ensure we got a 200 OK
+    [Fact]
+    public async Task GetAll_Works_For_Courses()
+    {
+        repo.Setup(r => r.IsPopulated()).ReturnsAsync(true);
+        repo.Setup(r => r.GetAllIncludingCoach()).ReturnsAsync(new List<Course>
+        {
+            new Course("C#", new DateOnly(2025,8,8), new DateOnly(2026,8,8)),
+            new Course("JavaScript", new DateOnly(2025,8,8), new DateOnly(2026,8,8))
+        });
 
-//         var updatedCourse = okResult.Value as CourseDTO;
-//         Assert.NotNull(updatedCourse); // Ensure value exists
+        var result = await controller.GetAll();
 
-//         Assert.Equal(["C#", "JavaScript"], updatedCourse.Requirements);
-//     }
-// }
+        repo.Verify(r => r.GetAllIncludingCoach());
+    }
+
+    [Fact]
+    public async void Adding_And_Removing_Skills_To_A_Course_Works()
+    {
+        List<string> newskills = ["C#", "JavaScript"];
+        var course = new Course("C#", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
+        repo.Setup(r => r.GetByIdIncludingCoach(1)).ReturnsAsync(course);
+
+        var result = await controller.ModifySkills(newskills, 1);
+        repo.Verify(r => r.GetByIdIncludingCoach(1));
+        Assert.Contains("C#", course.RequiredCompetencies);
+        Assert.Contains("JavaScript", course.RequiredCompetencies);
+    }
+}
