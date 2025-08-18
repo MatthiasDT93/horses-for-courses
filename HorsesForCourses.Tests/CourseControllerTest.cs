@@ -101,7 +101,7 @@ public class CourseControllerTest
 
         var result = await controller.GetAll();
 
-        repo.Verify(r => r.GetAllDTOIncludingCoach());
+        repo.Verify(r => r.GetAllDTOIncludingCoach(1, 5, default));
     }
 
     [Fact]

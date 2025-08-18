@@ -10,7 +10,7 @@ public interface IEFCoachRepository
     Task<List<Coach>> GetAllIncludingCourses();
     Task<Coach?> GetByIdIncludingCourses(int id);
     Task<CoachResponse?> GetDTOByIdIncludingCourses(int id);
-    Task<List<CoachListResponse>> GetAllDTOIncludingCourses();
+    Task<PagedResult<CoachListResponse>> GetAllDTOIncludingCourses(int page, int size, CancellationToken ct);
     Task<bool> IsPopulated();
     Task Save();
 }
@@ -36,6 +36,7 @@ public class EFCoachRepository : IEFCoachRepository
     {
         return await _context.Coaches
                                 .AsNoTracking()
+                                .OrderBy(c => c.Id)
                                 .Where(c => c.Id == id)
                                 .Select(c => new CoachResponse(
                                     c.Id,
@@ -55,17 +56,19 @@ public class EFCoachRepository : IEFCoachRepository
                             .ToListAsync();
     }
 
-    public async Task<List<CoachListResponse>> GetAllDTOIncludingCourses()
+    public async Task<PagedResult<CoachListResponse>> GetAllDTOIncludingCourses(int page, int size, CancellationToken ct)
     {
+        var request = new PageRequest(page, size);
         return await _context.Coaches
                                 .AsNoTracking()
+                                .OrderBy(c => c.Id)
                                 .Select(c => new CoachListResponse(
                                     c.Id,
                                     c.Name,
                                     c.Email.Value,
                                     c.Courses.Count
                                     )
-                                ).ToListAsync();
+                                ).ToPagedResultAsync(request, ct);
     }
 
     public async Task<bool> IsPopulated()

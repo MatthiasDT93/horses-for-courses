@@ -29,10 +29,15 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("/courses")]
-    public async Task<ActionResult<List<CourseListResponse>>> GetAll()
+    public async Task<ActionResult<List<CourseListResponse>>> GetAll(
+        [FromQuery] int page = 1,
+        [FromQuery] int size = 5,
+        CancellationToken ct = default
+    )
     {
+        var request = new PageRequest(page, size);
         if (!await _repository.IsPopulated()) { return NotFound(); }
-        var list = await _repository.GetAllDTOIncludingCoach();
+        var list = await _repository.GetAllDTOIncludingCoach(request.PageNumber, request.PageSize, ct);
 
         return Ok(list);
     }
