@@ -24,25 +24,23 @@ public class CourseController : ControllerBase
     [HttpGet("/courses/{id}")]
     public async Task<ActionResult<CourseResponse>> GetById(int id)
     {
-        var course = await _repository.GetByIdIncludingCoach(id);
-        return course is null ? NotFound() : Ok(new CourseResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.RequiredCompetencies, course.Planning, course.coach!));
+        var course = await _repository.GetDTOByIdIncludingCoach(id);
+        return course is null ? NotFound() : Ok(course);
     }
 
     [HttpGet("/courses")]
     public async Task<ActionResult<List<CourseListResponse>>> GetAll()
     {
         if (!await _repository.IsPopulated()) { return NotFound(); }
-        var list = await _repository.GetAllIncludingCoach();
-        var result = CourseListResponse.ExtractResponse(list);
+        var list = await _repository.GetAllDTOIncludingCoach();
 
-        return Ok(result);
+        return Ok(list);
     }
 
     [HttpPost("/courses")]
     public async Task<ActionResult<int>> AddCourse([FromBody] CourseRequest courserequest)
     {
-        var dto = CourseRequest.Request_To_DTO(courserequest);
-        var course = CourseDTOMapping.DTO_To_Course(dto);
+        var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
         await _repository.AddCourseToDB(course);
         await _uow.SaveChangesAsync();
         return Ok(course.Id);

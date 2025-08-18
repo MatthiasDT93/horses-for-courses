@@ -22,13 +22,4 @@ public class CourseListResponse
         hasCoach = coach;
     }
 
-    public static List<CourseListResponse> ExtractResponse(IReadOnlyList<Course> courses)
-    {
-        List<CourseListResponse> result = new();
-        foreach (var course in courses)
-        {
-            result.Add(new CourseListResponse(course.Id, course.CourseName, course.StartDate, course.EndDate, course.Planning.Any(), course.coach is not null));
-        }
-        return result;
-    }
 }

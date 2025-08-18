@@ -20,25 +20,23 @@ public class CoachController : ControllerBase
     [HttpGet("/coaches/{id}")]
     public async Task<ActionResult<CoachResponse>> GetById(int id)
     {
-        var coach = await _repository.GetByIdIncludingCourses(id);
-        return coach is null ? NotFound() : Ok(new CoachResponse(coach.Id, coach.Name, coach.Email.Value, coach.competencies, coach.Courses));
+        var coach = await _repository.GetDTOByIdIncludingCourses(id);
+        return coach is null ? NotFound() : Ok(coach);
     }
 
     [HttpGet("/coaches")]
     public async Task<ActionResult<List<CoachListResponse>>> GetAll()
     {
         if (!await _repository.IsPopulated()) { return NotFound(); }
-        var list = await _repository.GetAllIncludingCourses();
-        var result = CoachListResponse.ExtractResponse(list);
+        var list = await _repository.GetAllDTOIncludingCourses();
 
-        return Ok(result);
+        return Ok(list);
     }
 
     [HttpPost("/coaches")]
     public async Task<ActionResult<int>> AddCoach([FromBody] CoachRequest coachrequest)
     {
-        var dto = CoachRequest.Request_To_DTO(coachrequest);
-        var coach = CoachDTOMapping.DTO_To_Coach(dto);
+        var coach = new Coach(coachrequest.Name, coachrequest.Email);
         await _repository.AddCoachToDB(coach);
         await _uow.SaveChangesAsync();
         return Ok(coach.Id);
