@@ -18,19 +18,19 @@ public class CoachController : ControllerBase
     }
 
     [HttpGet("/coaches/{id}")]
-    public async Task<ActionResult<CoachResponse>> GetById(int id)
+    public async Task<IResult> GetById(int id)
     {
         var coach = await _repository.GetDTOByIdIncludingCourses(id);
-        return coach is null ? NotFound() : Ok(coach);
+        return coach is null ? Results.NotFound() : Results.Ok(coach);
     }
 
     [HttpGet("/coaches")]
-    public async Task<ActionResult<List<CoachListResponse>>> GetAll()
+    public async Task<IResult> GetAll()
     {
-        if (!await _repository.IsPopulated()) { return NotFound(); }
+        if (!await _repository.IsPopulated()) { return Results.NotFound(); }
         var list = await _repository.GetAllDTOIncludingCourses();
 
-        return Ok(list);
+        return Results.Ok(list);
     }
 
     [HttpPost("/coaches")]

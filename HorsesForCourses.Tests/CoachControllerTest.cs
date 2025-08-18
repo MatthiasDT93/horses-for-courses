@@ -48,7 +48,7 @@ public class CoachControllerTest
 
         var result = await controller.GetById(coachid.Value);
 
-        repo.Verify(r => r.GetByIdIncludingCourses(coachid.Value));
+        repo.Verify(r => r.GetDTOByIdIncludingCourses(coachid.Value));
     }
 
     [Fact]
@@ -96,15 +96,10 @@ public class CoachControllerTest
     public async Task GetAll_Works_For_Coaches()
     {
         repo.Setup(r => r.IsPopulated()).ReturnsAsync(true);
-        repo.Setup(r => r.GetAllIncludingCourses()).ReturnsAsync(new List<Coach>
-                    {
-                        new Coach("Mark", "mark@example.com"),
-                        new Coach("Bob", "bob@example.com")
-                    });
 
         var result = await controller.GetAll();
 
-        repo.Verify(r => r.GetAllIncludingCourses());
+        repo.Verify(r => r.GetAllDTOIncludingCourses());
     }
 
     [Fact]

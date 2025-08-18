@@ -50,7 +50,7 @@ public class CourseControllerTest
 
         var result = await controller.GetById(courseid.Value);
 
-        repo.Verify(r => r.GetByIdIncludingCoach(courseid.Value));
+        repo.Verify(r => r.GetDTOByIdIncludingCoach(courseid.Value));
     }
 
     [Fact]
@@ -98,15 +98,10 @@ public class CourseControllerTest
     public async Task GetAll_Works_For_Courses()
     {
         repo.Setup(r => r.IsPopulated()).ReturnsAsync(true);
-        repo.Setup(r => r.GetAllIncludingCoach()).ReturnsAsync(new List<Course>
-        {
-            new Course("C#", new DateOnly(2025,8,8), new DateOnly(2026,8,8)),
-            new Course("JavaScript", new DateOnly(2025,8,8), new DateOnly(2026,8,8))
-        });
 
         var result = await controller.GetAll();
 
-        repo.Verify(r => r.GetAllIncludingCoach());
+        repo.Verify(r => r.GetAllDTOIncludingCoach());
     }
 
     [Fact]
