@@ -9,7 +9,7 @@ public class BookingDTOMapping
     public static Booking DTO_To_Booking(BookingDTO dto)
     {
         var newplanning = TimeslotDTOMapping.DTOList_To_TimeslotList(dto.Planning);
-        return new Booking(newplanning, dto.Start, dto.End);
+        return Booking.From(newplanning, dto.Start, dto.End);
     }
 
     public static BookingDTO Booking_To_DTO(Booking booking)

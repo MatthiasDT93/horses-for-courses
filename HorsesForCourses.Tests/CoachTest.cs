@@ -92,7 +92,7 @@ public class CoachTest
 
         var list = new List<Timeslot> { Timeslot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(10, 0)) };
 
-        var newbooking = new Booking(list, startdate2, enddate2);
+        var newbooking = Booking.From(list, startdate2, enddate2);
         var exception = Assert.Throws<Exception>(() => coach.BookIn(newbooking));
         Assert.Equal("Coach's schedule does not match with this planning.", exception.Message);
     }

@@ -113,7 +113,7 @@ public class Course
         //if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
 
         this.coach = coach;
-        var newbooking = new Booking(Planning, StartDate, EndDate);
+        var newbooking = Booking.From(Planning, StartDate, EndDate);
         coach.BookIn(newbooking);
         coach.AddCourse(this);
         Status = States.FINALISED;
