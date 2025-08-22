@@ -43,16 +43,40 @@ public record Booking
         return Planning.Any(slot => booking.Planning.Any(newslot => slot.Overlap(newslot)));
     }
 
+    private static IEnumerable<DateOnly> GetDatesForSlot(Booking booking, Timeslot slot)
+    {
+        for (var date = booking.StartDate; date <= booking.EndDate; date = date.AddDays(1))
+        {
+            if (date.DayOfWeek == slot.Day)
+                yield return date;
+        }
+    }
+
     public bool BookingOverlap(Booking booking)
     {
-        if (PeriodOverlap(booking))
-        {
-            return PlanningOverlap(booking);
-        }
-        else
-        {
+        if (!PeriodOverlap(booking))
             return false;
+
+        if (!PlanningOverlap(booking))
+            return false;
+
+        var overlappingSlots = Planning
+            .SelectMany(slot => booking.Planning
+                .Where(newslot => slot.Overlap(newslot))
+                .Select(newslot => (slot, newslot)))
+            .ToList();
+
+        foreach (var (slot, newslot) in overlappingSlots)
+        {
+            // Find actual dates in both bookings for these days
+            var myDates = GetDatesForSlot(this, slot);
+            var otherDates = GetDatesForSlot(booking, newslot);
+
+            if (myDates.Intersect(otherDates).Any())
+                return true;
         }
+
+        return false;
     }
 
 }

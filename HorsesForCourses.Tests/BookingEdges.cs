@@ -31,7 +31,7 @@ public class BookingEdges
     }
 
     [Fact]
-    public void Overlaps_Edit_on_friday_but_we_only_teach_on_thursday()
+    public void Overlaps_Edit_on_thursday_but_we_only_teach_on_thursday()
     {
         // probably better guarded against/handled on Booking creation 
         //timeslot does not fall in booking start/end times
@@ -47,11 +47,9 @@ public class BookingEdges
         Assert.False(bookingOne.BookingOverlap(bookingTwo), "Bookings should not overlap.");
     }
 
-    [Fact(Skip = "Fails")]
+    [Fact]
     public void DayNotInBothBookings()
     {
-        // probably better guarded against/handled on Booking creation 
-        //timeslot does not fall in booking start/end times
         var bookingOne = Booking.From([Timeslot.From(DayOfWeek.Tuesday, new TimeOnly(9, 0), new TimeOnly(10, 0))],
             new DateOnly(2025, 1, 22),
             new DateOnly(2025, 1, 29));
@@ -61,7 +59,7 @@ public class BookingEdges
             new DateOnly(2025, 1, 27));
         Assert.Equal(DayOfWeek.Wednesday, new DateOnly(2025, 1, 22).DayOfWeek);
         Assert.Equal(DayOfWeek.Monday, new DateOnly(2025, 1, 27).DayOfWeek);
-        Assert.Equal(DayOfWeek.Monday, new DateOnly(2025, 1, 28).DayOfWeek);
+        Assert.Equal(DayOfWeek.Tuesday, new DateOnly(2025, 1, 28).DayOfWeek);
         Assert.False(bookingOne.BookingOverlap(bookingTwo), "Bookings should not overlap.");
     }
 }

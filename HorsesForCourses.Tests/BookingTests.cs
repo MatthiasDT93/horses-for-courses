@@ -71,12 +71,12 @@ public class BookingTest
     public void Overlaps_on_friday()
     {
         var bookingOne = Booking.From([Timeslot.From(DayOfWeek.Friday, new TimeOnly(9, 0), new TimeOnly(17, 0))],
-            DateOnly.FromDateTime(new DateTime(2025, 7, 15)),
-            DateOnly.FromDateTime(new DateTime(2025, 7, 22)));
+            DateOnly.FromDateTime(new DateTime(2025, 8, 15)),
+            DateOnly.FromDateTime(new DateTime(2025, 8, 22)));
 
         var bookingTwo = Booking.From([Timeslot.From(DayOfWeek.Friday, new TimeOnly(9, 0), new TimeOnly(17, 0))],
-            DateOnly.FromDateTime(new DateTime(2025, 7, 22)),
-            DateOnly.FromDateTime(new DateTime(2025, 7, 31)));
+            DateOnly.FromDateTime(new DateTime(2025, 8, 22)),
+            DateOnly.FromDateTime(new DateTime(2025, 8, 31)));
 
         Assert.True(bookingOne.BookingOverlap(bookingTwo));
     }
