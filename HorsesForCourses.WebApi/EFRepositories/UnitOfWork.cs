@@ -6,22 +6,17 @@ namespace HorsesForCourses.WebApi;
 
 public interface IUnitOfWork : IDisposable
 {
-    IEFCoachRepository Coachrepo { get; }
-    IEFCourseRepository Courserepo { get; }
     Task<int> SaveChangesAsync();
 }
 
 public class EfUnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
-    public IEFCoachRepository Coachrepo { get; }
-    public IEFCourseRepository Courserepo { get; }
 
-    public EfUnitOfWork(AppDbContext context, IEFCoachRepository coachrepo, IEFCourseRepository courserepo)
+    public EfUnitOfWork(AppDbContext context)
     {
         _context = context;
-        Coachrepo = coachrepo;
-        Courserepo = courserepo;
+
     }
 
     public async Task<int> SaveChangesAsync()

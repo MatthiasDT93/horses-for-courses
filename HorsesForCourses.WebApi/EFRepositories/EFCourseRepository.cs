@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using HorsesForCourses.Core;
 using HorsesForCourses.WebApi;
 using HorsesForCourses.WebApi.Controllers;
@@ -16,11 +17,13 @@ public interface IEFCourseRepository
 
 public class EFCourseRepository : IEFCourseRepository
 {
+    private readonly IUnitOfWork _uow;
     private readonly AppDbContext _context;
 
-    public EFCourseRepository(AppDbContext context)
+    public EFCourseRepository(AppDbContext context, IUnitOfWork uow)
     {
         _context = context;
+        _uow = uow;
     }
 
     public async Task<Course?> GetByIdIncludingCoach(int id)
@@ -77,12 +80,7 @@ public class EFCourseRepository : IEFCourseRepository
 
     public async Task AddCourseToDB(Course course)
     {
-        var lastId = await _context.Courses
-                            .OrderByDescending(x => x.Id)
-                            .Select(x => x.Id)
-                            .FirstOrDefaultAsync();
-        course.AssignId(lastId + 1);
-        _context.Courses.Add(course);
+        await _context.Courses.AddAsync(course);
     }
 
     public async Task Save()

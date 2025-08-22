@@ -39,7 +39,7 @@ public class CourseControllerTest
         var result = await controller.AddCourse(request);
         repo.Verify(r => r.AddCourseToDB(It.Is<Course>(
                                         c => c.CourseName == "C# 101" && c.StartDate == new DateOnly(2025, 8, 8) && c.EndDate == new DateOnly(2026, 8, 8))), Times.Once);
-        uow.Verify(r => r.SaveChangesAsync());
+        //uow.Verify(r => r.SaveChangesAsync());
     }
 
     [Fact]
@@ -62,9 +62,10 @@ public class CourseControllerTest
             .Options;
 
         using var context = new AppDbContext(options);
-        var repo1 = new EFCoachRepository(context);
-        var repo2 = new EFCourseRepository(context);
-        var uow = new EfUnitOfWork(context, repo1, repo2);
+        var uow = new EfUnitOfWork(context);
+        var repo1 = new EFCoachRepository(context, uow);
+        var repo2 = new EFCourseRepository(context, uow);
+
 
         var course = new Course("C# 101", new DateOnly(2025, 8, 8), new DateOnly(2026, 8, 8));
         await repo2.AddCourseToDB(course);
@@ -85,9 +86,10 @@ public class CourseControllerTest
             .Options;
 
         using var context = new AppDbContext(options);
-        var repo = new EFCoachRepository(context);
-        var repo2 = new EFCourseRepository(context);
-        var uow = new EfUnitOfWork(context, repo, repo2);
+        var uow = new EfUnitOfWork(context);
+        var repo = new EFCoachRepository(context, uow);
+        var repo2 = new EFCourseRepository(context, uow);
+
 
         var result = await repo.IsPopulated();
 

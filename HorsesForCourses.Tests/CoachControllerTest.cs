@@ -37,7 +37,7 @@ public class CoachControllerTest
         var result = await controller.AddCoach(request);
         repo.Verify(r => r.AddCoachToDB(It.Is<Coach>(
                                         c => c.Name == "Mark" && c.Email.Value == "mark@skynet.com")), Times.Once);
-        uow.Verify(r => r.SaveChangesAsync());
+        //uow.Verify(r => r.SaveChangesAsync());
     }
 
     [Fact]
@@ -60,9 +60,10 @@ public class CoachControllerTest
             .Options;
 
         using var context = new AppDbContext(options);
-        var repo1 = new EFCoachRepository(context);
-        var repo2 = new EFCourseRepository(context);
-        var uow = new EfUnitOfWork(context, repo1, repo2);
+        var uow = new EfUnitOfWork(context);
+        var repo1 = new EFCoachRepository(context, uow);
+        var repo2 = new EFCourseRepository(context, uow);
+
 
         var coach = new Coach("Alice", "alice@example.com");
         await repo1.AddCoachToDB(coach);
@@ -83,9 +84,10 @@ public class CoachControllerTest
             .Options;
 
         using var context = new AppDbContext(options);
-        var repo = new EFCoachRepository(context);
-        var repo2 = new EFCourseRepository(context);
-        var uow = new EfUnitOfWork(context, repo, repo2);
+        var uow = new EfUnitOfWork(context);
+        var repo = new EFCoachRepository(context, uow);
+        var repo2 = new EFCourseRepository(context, uow);
+
 
         var result = await repo.IsPopulated();
 

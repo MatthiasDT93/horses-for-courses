@@ -36,10 +36,10 @@ public class Course
         EndDate = end;
     }
 
-    public void AssignId(int id)
-    {
-        Id = id;
-    }
+    // public void AssignId(int id)
+    // {
+    //     Id = id;
+    // }
 
     private void CheckState()
     {

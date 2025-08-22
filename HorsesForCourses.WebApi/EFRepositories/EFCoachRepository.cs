@@ -17,10 +17,12 @@ public interface IEFCoachRepository
 
 public class EFCoachRepository : IEFCoachRepository
 {
+    private readonly IUnitOfWork _uow;
     private readonly AppDbContext _context;
 
-    public EFCoachRepository(AppDbContext context)
+    public EFCoachRepository(AppDbContext context, IUnitOfWork uow)
     {
+        _uow = uow;
         _context = context;
     }
 
@@ -78,12 +80,7 @@ public class EFCoachRepository : IEFCoachRepository
 
     public async Task AddCoachToDB(Coach coach)
     {
-        var lastId = await _context.Coaches
-                            .OrderByDescending(x => x.Id)
-                            .Select(x => x.Id)
-                            .FirstOrDefaultAsync();
-        coach.AssignId(lastId + 1);
-        _context.Coaches.Add(coach);
+        await _context.Coaches.AddAsync(coach);
     }
 
     public async Task Save()
