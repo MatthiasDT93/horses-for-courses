@@ -26,11 +26,6 @@ public class Coach
         Courses = new();
     }
 
-    // public void AssignId(int id)
-    // {
-    //     Id = id;
-    // }
-
     public void AddCourse(Course course)
     {
         Courses.Add(course);

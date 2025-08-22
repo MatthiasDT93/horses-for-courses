@@ -36,11 +36,6 @@ public class Course
         EndDate = end;
     }
 
-    // public void AssignId(int id)
-    // {
-    //     Id = id;
-    // }
-
     private void CheckState()
     {
         if (Status == States.FINALISED) throw new Exception("Course has been finalised and cannot be altered.");

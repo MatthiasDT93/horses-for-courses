@@ -8,7 +8,7 @@ public record Timeslot
 
     public TimeOnly End { get; set; }
 
-    public Timeslot(DayOfWeek day, TimeOnly start, TimeOnly end) { Day = day; Start = start; End = end; }
+    private Timeslot(DayOfWeek day, TimeOnly start, TimeOnly end) { Day = day; Start = start; End = end; }
 
     public static Timeslot From(DayOfWeek day, TimeOnly start, TimeOnly end)
     {

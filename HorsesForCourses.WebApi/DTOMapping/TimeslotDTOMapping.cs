@@ -8,7 +8,7 @@ public class TimeslotDTOMapping
 
     public static Timeslot DTO_To_Timeslot(TimeSlotDTO dto)
     {
-        return new Timeslot(dto.Day, dto.Start, dto.End);
+        return Timeslot.From(dto.Day, dto.Start, dto.End);
     }
 
     public static TimeSlotDTO Timeslot_To_DTO(Timeslot timeslot)
