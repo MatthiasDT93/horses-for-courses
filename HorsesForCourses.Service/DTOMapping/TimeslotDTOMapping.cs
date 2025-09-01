@@ -1,6 +1,6 @@
 using HorsesForCourses.Core;
 
-namespace HorsesForCourses.WebApi;
+namespace HorsesForCourses.Service;
 
 
 public class TimeslotDTOMapping

@@ -1,8 +1,4 @@
-
-
-using HorsesForCourses.WebApi.Controllers;
-
-namespace HorsesForCourses.WebApi;
+namespace HorsesForCourses.Service;
 
 public interface IUnitOfWork : IDisposable
 {

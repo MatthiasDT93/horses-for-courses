@@ -1,6 +1,7 @@
 
 
 using HorsesForCourses.Core;
+using HorsesForCourses.Service;
 using HorsesForCourses.WebApi.Controllers;
 using Microsoft.EntityFrameworkCore;
 

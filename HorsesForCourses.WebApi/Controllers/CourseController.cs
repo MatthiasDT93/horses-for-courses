@@ -1,4 +1,5 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,18 +14,21 @@ public class CourseController : ControllerBase
 
     private readonly IEFCoachRepository _coaches;
 
+    private readonly ICourseService _courseService;
 
-    public CourseController(IEFCourseRepository repository, IEFCoachRepository coaches, IUnitOfWork uow)
+
+    public CourseController(IEFCourseRepository repository, IEFCoachRepository coaches, IUnitOfWork uow, ICourseService courseService)
     {
         _repository = repository;
         _coaches = coaches;
         _uow = uow;
+        _courseService = courseService;
     }
 
     [HttpGet("/courses/{id}")]
     public async Task<ActionResult<CourseResponse>> GetById(int id)
     {
-        var course = await _repository.GetDTOByIdIncludingCoach(id);
+        var course = await _courseService.GetById(id);
         return course is null ? NotFound() : Ok(course);
     }
 
@@ -35,9 +39,7 @@ public class CourseController : ControllerBase
         CancellationToken ct = default
     )
     {
-        var request = new PageRequest(page, size);
-        if (!await _repository.IsPopulated()) { return NotFound(); }
-        var list = await _repository.GetAllDTOIncludingCoach(request.PageNumber, request.PageSize, ct);
+        var list = await _courseService.GetAll(page, size, ct);
 
         return Ok(list);
     }
@@ -45,24 +47,18 @@ public class CourseController : ControllerBase
     [HttpPost("/courses")]
     public async Task<ActionResult<int>> AddCourse([FromBody] CourseRequest courserequest)
     {
-        var course = new Course(courserequest.Name, courserequest.Start, courserequest.End);
-        await _repository.AddCourseToDB(course);
-        await _uow.SaveChangesAsync();
+        var course = await _courseService.AddCourse(courserequest.Name, courserequest.Start, courserequest.End);
         return Ok(course.Id);
     }
 
     [HttpPost("/courses/{id}/skills")]
     public async Task<ActionResult> ModifySkills([FromBody] List<string> newreqs, int id)
     {
-        var course = await _repository.GetByIdIncludingCoach(id);
-        if (course == null)
+        var result = await _courseService.ModifySkills(newreqs, id);
+        if (!result)
         {
             return NotFound($"Course with id '{id}' not found.");
         }
-
-        course.OverWriteRequirements(newreqs);
-
-        await _uow.SaveChangesAsync();
         return Ok();
     }
 
@@ -70,16 +66,11 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/timeslots")]
     public async Task<ActionResult> ModifyTimeSlots([FromBody] List<TimeSlotDTO> newslots, int id)
     {
-        var course = await _repository.GetByIdIncludingCoach(id);
-        if (course == null)
+        var result = await _courseService.ModifyTimeSlots(newslots, id);
+        if (!result)
         {
             return NotFound($"Course with id '{id}' not found.");
         }
-
-        var newnewslots = TimeslotDTOMapping.DTOList_To_TimeslotList(newslots);
-        course.OverWriteCourseMoment(newnewslots);
-
-        await _uow.SaveChangesAsync();
         return Ok();
     }
 
@@ -87,36 +78,26 @@ public class CourseController : ControllerBase
     [HttpPost("/courses/{id}/confirm")]
     public async Task<ActionResult> ConfirmCourse(int id)
     {
-        var course = await _repository.GetByIdIncludingCoach(id);
-        if (course == null)
+        var result = await _courseService.ConfirmCourse(id);
+        if (!result)
         {
             return NotFound($"Course with id '{id}' not found.");
         }
-
-        course.ConfirmCourse();
-
-        await _uow.SaveChangesAsync();
         return Ok();
     }
 
     [HttpPost("/courses/{CourseId}/assign-coach")]
     public async Task<ActionResult> AssignCoach(int CourseId, int CoachId)
     {
-        var course = await _repository.GetByIdIncludingCoach(CourseId);
-        if (course == null)
+        var result = await _courseService.AssignCoach(CourseId, CoachId);
+        if (!result.Item1)
         {
             return NotFound($"Course with id '{CourseId}' not found.");
         }
-
-        var coach = await _coaches.GetByIdIncludingCourses(CoachId);
-        if (coach == null)
+        if (!result.Item2)
         {
             return NotFound($"Coach with id '{CoachId}' not found.");
         }
-
-        course.AddCoach(coach);
-
-        await _uow.SaveChangesAsync();
         return Ok();
     }
 }

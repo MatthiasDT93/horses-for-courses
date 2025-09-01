@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using HorsesForCourses.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.Text.Json;
 
-namespace HorsesForCourses.WebApi.Controllers;
+namespace HorsesForCourses.Service;
 
 public class AppDbContext : DbContext
 {

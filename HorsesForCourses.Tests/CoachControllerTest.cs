@@ -6,6 +6,7 @@ using HorsesForCourses.WebApi;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using HorsesForCourses.Service;
 
 namespace HorsesForCourses.Tests;
 
@@ -15,6 +16,8 @@ public class CoachControllerTest
 
     private readonly Mock<IUnitOfWork> uow;
 
+    private readonly Mock<ICoachService> serv;
+
 
     public CoachController controller { get; set; }
 
@@ -22,33 +25,44 @@ public class CoachControllerTest
     {
         repo = new Mock<IEFCoachRepository>();
         uow = new Mock<IUnitOfWork>();
+        serv = new Mock<ICoachService>();
 
         uow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
 
-        controller = new CoachController(repo.Object, uow.Object);
+        controller = new CoachController(repo.Object, uow.Object, serv.Object);
     }
 
 
     [Fact]
     public async void Adding_A_Coach_To_Repo_Works()
     {
+        // Arrange
         var request = new CoachRequest("Mark", "mark@skynet.com");
+        var coach = new Coach("Mark", "mark@skynet.com");
 
+        serv.Setup(s => s.AddCoach(request.Name, request.Email)).ReturnsAsync(coach);
+
+        // Act
         var result = await controller.AddCoach(request);
-        repo.Verify(r => r.AddCoachToDB(It.Is<Coach>(
-                                        c => c.Name == "Mark" && c.Email.Value == "mark@skynet.com")), Times.Once);
-        //uow.Verify(r => r.SaveChangesAsync());
+
+        // Assert
+        serv.Verify(s => s.AddCoach("Mark", "mark@skynet.com"), Times.Once);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
     }
 
     [Fact]
     public async void GetById_Works_For_Coaches()
     {
         var request = new CoachRequest("Mark", "mark@skynet.com");
-        var coachid = await controller.AddCoach(request);
+        var coach = new Coach("Mark", "mark@skynet.com");
+        var response = new CoachResponse(coach.Id, coach.Name, coach.Email.Value, coach.competencies, []);
 
-        var result = await controller.GetById(coachid.Value);
+        serv.Setup(s => s.GetById(coach.Id)).ReturnsAsync(response);
 
-        repo.Verify(r => r.GetDTOByIdIncludingCourses(coachid.Value));
+        var result = await controller.GetById(coach.Id);
+
+        serv.Verify(s => s.GetById(coach.Id));
     }
 
     [Fact]
@@ -101,19 +115,39 @@ public class CoachControllerTest
 
         var result = await controller.GetAll();
 
-        repo.Verify(r => r.GetAllDTOIncludingCourses(1, 5, default));
+        serv.Verify(r => r.GetAll(1, 5, default));
     }
 
     [Fact]
-    public async void Adding_And_Removing_Skills_To_A_Coach_Works()
+    public async void Adding_And_Removing_Skills_Controller_Test()
     {
         List<string> newskills = ["C#", "JavaScript"];
         var coach = new Coach("Mark", "mark@example.com");
         repo.Setup(r => r.GetByIdIncludingCourses(1)).ReturnsAsync(coach);
 
         var result = await controller.ModifySkills(newskills, 1);
-        repo.Verify(r => r.GetByIdIncludingCourses(1));
+        serv.Verify(s => s.ModifySkills(newskills, 1));
+
+    }
+
+    [Fact]
+    public async Task Service_ModifySkills_Updates_Coach_Competencies()
+    {
+        // Arrange
+        var newskills = new List<string> { "C#", "JavaScript" };
+        var coach = new Coach("Mark", "mark@example.com");
+
+        repo.Setup(r => r.GetByIdIncludingCourses(1)).ReturnsAsync(coach);
+
+        var service = new CoachService(repo.Object, uow.Object);
+
+        // Act
+        var result = await service.ModifySkills(newskills, 1);
+
+        // Assert
+        Assert.True(result);
         Assert.Contains("C#", coach.competencies);
         Assert.Contains("JavaScript", coach.competencies);
+        uow.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 }

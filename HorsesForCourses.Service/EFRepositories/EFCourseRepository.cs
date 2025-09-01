@@ -1,8 +1,9 @@
 using System.Threading.Tasks;
 using HorsesForCourses.Core;
 using HorsesForCourses.WebApi;
-using HorsesForCourses.WebApi.Controllers;
 using Microsoft.EntityFrameworkCore;
+
+namespace HorsesForCourses.Service;
 
 public interface IEFCourseRepository
 {

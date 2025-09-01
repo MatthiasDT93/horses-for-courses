@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using HorsesForCourses.WebApi;
+using HorsesForCourses.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IEFCoachRepository, EFCoachRepository>();
 builder.Services.AddScoped<IEFCourseRepository, EFCourseRepository>();
+builder.Services.AddScoped<ICoachService, CoachService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 // Unit of Work
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();

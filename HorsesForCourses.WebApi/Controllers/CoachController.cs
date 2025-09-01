@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HorsesForCourses.Core;
 using Microsoft.EntityFrameworkCore;
+using HorsesForCourses.Service;
 
 namespace HorsesForCourses.WebApi.Controllers;
 
@@ -10,17 +11,19 @@ public class CoachController : ControllerBase
 {
     private readonly IUnitOfWork _uow;
     private readonly IEFCoachRepository _repository;
+    private readonly ICoachService _coachService;
 
-    public CoachController(IEFCoachRepository repository, IUnitOfWork uow)
+    public CoachController(IEFCoachRepository repository, IUnitOfWork uow, ICoachService coachService)
     {
         _repository = repository;
         _uow = uow;
+        _coachService = coachService;
     }
 
     [HttpGet("/coaches/{id}")]
     public async Task<IResult> GetById(int id)
     {
-        var coach = await _repository.GetDTOByIdIncludingCourses(id);
+        var coach = await _coachService.GetById(id);
         return coach is null ? Results.NotFound() : Results.Ok(coach);
     }
 
@@ -31,9 +34,7 @@ public class CoachController : ControllerBase
         CancellationToken ct = default
     )
     {
-        var request = new PageRequest(page, size);
-        if (!await _repository.IsPopulated()) { return Results.NotFound(); }
-        var list = await _repository.GetAllDTOIncludingCourses(request.PageNumber, request.PageSize, ct);
+        var list = await _coachService.GetAll(page, size, ct);
 
         return Results.Ok(list);
     }
@@ -41,24 +42,18 @@ public class CoachController : ControllerBase
     [HttpPost("/coaches")]
     public async Task<ActionResult<int>> AddCoach([FromBody] CoachRequest coachrequest)
     {
-        var coach = new Coach(coachrequest.Name, coachrequest.Email);
-        await _repository.AddCoachToDB(coach);
-        await _uow.SaveChangesAsync();
+        var coach = await _coachService.AddCoach(coachrequest.Name, coachrequest.Email);
         return Ok(coach.Id);
     }
 
     [HttpPost("/coaches/{id}/skills")]
     public async Task<ActionResult> ModifySkills([FromBody] List<string> newskills, int id)
     {
-        var coach = await _repository.GetByIdIncludingCourses(id);
-        if (coach == null)
+        var result = await _coachService.ModifySkills(newskills, id);
+        if (!result)
         {
             return NotFound($"Coach with id '{id}' not found.");
         }
-
-        coach.OverWriteCompetences(newskills);
-
-        await _uow.SaveChangesAsync();
         return Ok();
     }
 }

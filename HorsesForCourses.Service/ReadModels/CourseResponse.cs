@@ -1,6 +1,7 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.WebApi;
 
-namespace HorsesForCourses.WebApi;
+namespace HorsesForCourses.Service;
 
 
 public class CourseResponse

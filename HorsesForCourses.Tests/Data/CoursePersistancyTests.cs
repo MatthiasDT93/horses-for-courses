@@ -2,6 +2,7 @@ using HorsesForCourses.Core;
 using Microsoft.EntityFrameworkCore;
 using HorsesForCourses.WebApi.Controllers;
 using Microsoft.Data.Sqlite;
+using HorsesForCourses.Service;
 
 namespace HorsesForCourses.Tests.Data;
 
