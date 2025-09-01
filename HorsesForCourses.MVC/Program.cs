@@ -1,7 +1,21 @@
+using HorsesForCourses.Service;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(@"Data Source=C:\Users\becod\horses-for-courses\HorsesForCourses.Service\horsesforcourses.db"));
+
+builder.Services.AddScoped<IEFCoachRepository, EFCoachRepository>();
+builder.Services.AddScoped<IEFCourseRepository, EFCourseRepository>();
+builder.Services.AddScoped<ICoachService, CoachService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 
 var app = builder.Build();
 

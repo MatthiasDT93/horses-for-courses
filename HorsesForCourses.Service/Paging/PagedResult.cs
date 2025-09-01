@@ -1,4 +1,4 @@
-namespace HorsesForCourses.WebApi;
+namespace HorsesForCourses.Service;
 
 public sealed record PagedResult<T>(
     IReadOnlyList<T> Items,

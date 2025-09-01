@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace HorsesForCourses.WebApi;
+namespace HorsesForCourses.Service;
 
 public static class PagingExecution
 {

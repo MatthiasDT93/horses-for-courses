@@ -1,4 +1,4 @@
-namespace HorsesForCourses.WebApi;
+namespace HorsesForCourses.Service;
 
 public static class QueryablePagingExtensions
 {
