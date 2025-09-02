@@ -7,10 +7,9 @@
 <hr />
 <h3><b>Editing skills for @Model.CoachName</b></h3>
 
-<form asp-action="EditCoachSkillsForm" method="post">
+<form asp-action="EditCoachSkillsForm" asp-route-id="@Model.Id" method="post">
     <table>
         <tr>
-            <input type="hidden" name="txtid" value="@Model.Id" />
             <td>Enter List of Skills (, separated): </td>
             <td><input type="text" name="txtskillsinput" value="@Model.SkillsInput" /></td>
         </tr>

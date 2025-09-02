@@ -77,14 +77,14 @@ public class CoachMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditCoachSkillsForm(int txtid, string txtskillsinput)
+    public async Task<IActionResult> EditCoachSkillsForm(int id, string txtskillsinput)
     {
         var txtskills = txtskillsinput?
                         .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                         .ToList() ?? new List<string>();
-        var result = await _service.ModifySkills(txtskills, txtid);
+        var result = await _service.ModifySkills(txtskills, id);
         if (!result)
-            return View(new EditCoachSkillsViewModel(txtid, txtskillsinput!));
+            return View(new EditCoachSkillsViewModel(id, txtskillsinput!));
         return RedirectToAction(nameof(Index));
     }
 }
