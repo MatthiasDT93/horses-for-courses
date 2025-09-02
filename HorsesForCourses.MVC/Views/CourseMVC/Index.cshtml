@@ -1,0 +1,40 @@
+@using HorsesForCourses.Service
+
+
+@model PagedResult<CourseListResponse>
+
+<h2>Courses</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Has schedule</th>
+            <th>Has coach</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model.Items)
+        {
+            <tr>
+                <td>@course.Id</td>
+                <td>@course.Name</td>
+                <td>@course.startdate</td>
+                <td>@course.enddate</td>
+                <td>@course.hasSchedule</td>
+                <td>@course.hasCoach</td>
+                <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="Details"
+                        asp-route-id="@course.Id">Details</a></td>
+                @*<td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditCourseSkillsForm"
+                        asp-route-id="@course.Id">Edit requirements</a></td> *@
+                <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC"
+                        asp-action="EditCourseTimeslotsForm" asp-route-id="@course.Id">Edit schedule</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

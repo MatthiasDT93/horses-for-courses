@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi;
 using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.Service;

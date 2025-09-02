@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using HorsesForCourses.MVC.Models;
 using HorsesForCourses.Service;
-using HorsesForCourses.WebApi;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Console;
 using HorsesForCourses.MVC.Models.Coaches;

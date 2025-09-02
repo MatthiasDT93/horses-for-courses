@@ -1,6 +1,5 @@
 using System.Linq;
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi;
 using Microsoft.EntityFrameworkCore;
 
 

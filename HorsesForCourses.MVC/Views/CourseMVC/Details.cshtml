@@ -1,0 +1,31 @@
+@using HorsesForCourses.Service
+@using System.Linq
+
+@model CourseResponse
+
+<h2>Course</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Required skills</th>
+            <th>Schedule</th>
+            <th>Coach</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Id</td>
+            <td>@Model.Name</td>
+            <td>@Model.startdate</td>
+            <td>@Model.enddate</td>
+            <td>@string.Join(", ", Model.Skills)</td>
+            <td>@string.Join(Environment.NewLine, Model.timeslots.Select(t => $"{t.Day} : {t.Start:HH\\:mm} - {t.End:HH\\:mm}"))</td>
+            <td>@Model.coach</td>
+        </tr>
+    </tbody>
+</table>

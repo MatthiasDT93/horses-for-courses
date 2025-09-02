@@ -1,0 +1,82 @@
+@using HorsesForCourses.MVC.Models.Courses
+@using HorsesForCourses.Service
+@using System.Text.Json
+
+
+@model EditCourseTimeslotsViewModel
+
+<hr />
+<h3><b>Editing schedule for the course: @Model.CourseName</b></h3>
+
+<form asp-action="EditCourseTimeslotsForm" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <table id="schedule">
+        @for (int i = 0; i < Model.NewSlots.Count; i++)
+        {
+            <tr>
+                <td>
+                    <select name="TimeSlots[@i].Day">
+                        @foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+                        {
+                            <option value="@day" selected="@(Model.NewSlots[i].Day == day ? "selected" : null)">
+                                @day
+                            </option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <input type="time" name="TimeSlots[@i].Start" value="@Model.NewSlots[i].Start.ToString("HH:mm")" />
+                </td>
+                <td>
+                    <input type="time" name="TimeSlots[@i].End" value="@Model.NewSlots[i].End.ToString("HH:mm")" />
+                </td>
+            </tr>
+        }
+    </table>
+
+    <button type="button" onclick="addRow()">Add Row</button>
+    <button type="submit">Save</button>
+</form>
+
+<script>
+    function addRow() {
+        const table = document.getElementById('schedule');
+        const index = table.rows.length;
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+        <td>
+            <select name="TimeSlots[${index}].Day">
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+            </select>
+        </td>
+        <td><input type="time" name="TimeSlots[${index}].Start" /></td>
+        <td><input type="time" name="TimeSlots[${index}].End" /></td>
+        <td><button type="button" onclick="removeRow(this)">Delete</button></td>
+    `;
+
+        table.appendChild(row);
+    }
+
+    function removeRow(button) {
+        const row = button.closest('tr');
+        row.remove();
+
+        // Optional: re-index all rows to keep input names sequential
+        const rows = document.querySelectorAll('#schedule tr');
+        rows.forEach((r, i) => {
+            r.querySelectorAll('select, input[type="time"]').forEach(input => {
+                const parts = input.name.split('.');
+                const field = parts[1]; // Day, Start, End
+                input.name = `TimeSlots[${i}].${field}`;
+            });
+        });
+    }
+</script>

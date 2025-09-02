@@ -1,0 +1,28 @@
+@using HorsesForCourses.MVC.Models.Courses
+@using HorsesForCourses.Service
+
+
+@model CreateCourseViewModel
+
+<hr />
+<h3><b>Creating a course</b></h3>
+
+<form asp-action="CreateCourseForm" method="post">
+    <table>
+        <tr>
+            <td>Enter Name: </td>
+            <td><input type="text" name="txtcoursename" /></td>
+        </tr>
+        <tr>
+            <td>Start date: </td>
+            <td><input type="date" name="txtstart" /></td>
+        </tr>
+        <tr>
+            <td>End date: </td>
+            <td><input type="date" name="txtend" /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Create Course" /></td>
+        </tr>
+    </table>
+</form>
