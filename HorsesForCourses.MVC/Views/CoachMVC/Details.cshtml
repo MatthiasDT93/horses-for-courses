@@ -1,0 +1,27 @@
+@using HorsesForCourses.Service
+@using System.Linq
+
+@model CoachResponse
+
+<h2>Coach</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Skills</th>
+            <th>Courses</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Id</td>
+            <td>@Model.Name</td>
+            <td>@Model.Email</td>
+            <td>@string.Join(", ", Model.Skills)</td>
+            <td>@string.Join(", ", Model.Courses.Select(c => c.Name))</td>
+        </tr>
+    </tbody>
+</table>

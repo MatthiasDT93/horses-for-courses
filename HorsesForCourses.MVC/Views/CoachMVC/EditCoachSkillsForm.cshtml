@@ -1,0 +1,21 @@
+@using HorsesForCourses.MVC.Models.Coaches
+@using HorsesForCourses.Service
+
+
+@model EditCoachSkillsViewModel
+
+<hr />
+<h3><b>Editing skills for @Model.CoachName</b></h3>
+
+<form asp-action="EditCoachSkillsForm" method="post">
+    <table>
+        <tr>
+            <input type="hidden" name="txtid" value="@Model.Id" />
+            <td>Enter List of Skills (, separated): </td>
+            <td><input type="text" name="txtskillsinput" value="@Model.SkillsInput" /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Overwrite skills" /></td>
+        </tr>
+    </table>
+</form>

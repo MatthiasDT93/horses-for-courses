@@ -1,0 +1,24 @@
+@using HorsesForCourses.MVC.Models.Coaches
+@using HorsesForCourses.Service
+
+
+@model CreateCoachViewModel
+
+<hr />
+<h3><b>Creating a coach</b></h3>
+
+<form asp-action="CreateCoachForm" method="post">
+    <table>
+        <tr>
+            <td>Enter Name: </td>
+            <td><input type="text" name="txtName" /></td>
+        </tr>
+        <tr>
+            <td>Email: </td>
+            <td><input type="text" name="txtemail" /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Create Coach" /></td>
+        </tr>
+    </table>
+</form>
