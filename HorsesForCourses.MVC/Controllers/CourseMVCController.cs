@@ -55,12 +55,35 @@ public class CourseMVCController : Controller
     }
 
 
+    [HttpGet]
+    public async Task<IActionResult> EditSkillsMenu(int id)
+    {
+        var course = await _service.GetById(id);
+        if (course == null)
+            return NotFound();
+        var model = new EditCourseSkillsViewModel
+        {
+            CourseId = course.Id,
+            CourseName = course.Name,
+            CurrentSkills = course.Skills.ToList()
+        };
+        return View(model);
+    }
 
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditSkills(EditCourseSkillsViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
 
+        var success = await _service.ModifySkills(model.NewSkills, model.CourseId);
+        if (!success)
+            return NotFound();
 
-
-
+        return RedirectToAction(nameof(Details), new { id = model.CourseId });
+    }
 
 
 
