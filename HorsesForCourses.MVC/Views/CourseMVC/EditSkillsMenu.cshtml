@@ -20,7 +20,7 @@
         @for (int i = 0; i < Model.CurrentSkills.Count; i++)
         {
             <div class="skill-item">
-                <input type="hidden" value="@Model.CurrentSkills[i]" />
+                <input type="hidden" name="NewSkills[@i]" value="@Model.CurrentSkills[i]" />
                 <span>@Model.CurrentSkills[i]</span>
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeSkill(this)">Remove</button>
             </div>
