@@ -65,7 +65,7 @@ public class CourseMVCController : Controller
         {
             CourseId = course.Id,
             CourseName = course.Name,
-            CurrentSkills = course.Skills.ToList()
+            Skills = course.Skills.ToList()
         };
         return View(model);
     }
@@ -78,7 +78,7 @@ public class CourseMVCController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var success = await _service.ModifySkills(model.NewSkills, model.CourseId);
+        var success = await _service.ModifySkills(model.Skills, model.CourseId);
         if (!success)
             return NotFound();
 

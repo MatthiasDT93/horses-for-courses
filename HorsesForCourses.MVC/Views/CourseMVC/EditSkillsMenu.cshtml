@@ -17,11 +17,11 @@
     <br />
 
     <div id="skills-list">
-        @for (int i = 0; i < Model.CurrentSkills.Count; i++)
+        @for (int i = 0; i < Model.Skills.Count; i++)
         {
             <div class="skill-item">
-                <input type="hidden" name="NewSkills[@i]" value="@Model.CurrentSkills[i]" />
-                <span>@Model.CurrentSkills[i]</span>
+                <input type="hidden" name="Skills[@i]" value="@Model.Skills[i]" />
+                <span>@Model.Skills[i]</span>
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeSkill(this)">Remove</button>
             </div>
         }
@@ -48,7 +48,7 @@
         const div = document.createElement('div');
         div.className = 'skill-item';
         div.innerHTML = `
-            <input type="hidden" name="NewSkills[${index}]" value="${skill}" />
+            <input type="hidden" name="Skills[${index}]" value="${skill}" />
             <span>${skill}</span>
             <button type="button" class="btn btn-danger btn-sm" onclick="removeSkill(this)">Remove</button>
         `;
@@ -62,7 +62,7 @@
         const items = document.querySelectorAll('#skills-list .skill-item');
         items.forEach((el, i) => {
             const hiddenInput = el.querySelector('input[type="hidden"]');
-            hiddenInput.name = `NewSkills[${i}]`;
+            hiddenInput.name = `Skills[${i}]`;
         });
     }
 </script>
