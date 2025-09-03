@@ -65,7 +65,7 @@ public class CourseMVCController : Controller
 
 
     [HttpGet]
-    public async Task<IActionResult> EditCourseTimeslotsForm(int id)
+    public async Task<IActionResult> EditTimeslotsMenu(int id)
     {
         var course = await _service.GetById(id);
         var model = new EditCourseTimeslotsViewModel(course.Id, course.Name, course.timeslots);

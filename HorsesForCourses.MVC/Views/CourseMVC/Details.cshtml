@@ -24,7 +24,9 @@
             <td>@Model.startdate</td>
             <td>@Model.enddate</td>
             <td>@string.Join(", ", Model.Skills)</td>
-            <td>@string.Join(Environment.NewLine, Model.timeslots.Select(t => $"{t.Day} : {t.Start:HH\\:mm} - {t.End:HH\\:mm}"))</td>
+            <td>
+                <pre>@string.Join(Environment.NewLine, Model.timeslots.OrderBy(t => t.Day).Select(t => $"{t.Day} : {t.Start:HH\\:mm} - {t.End:HH\\:mm}"))</pre>
+            </td>
             <td>@Model.coach</td>
         </tr>
     </tbody>

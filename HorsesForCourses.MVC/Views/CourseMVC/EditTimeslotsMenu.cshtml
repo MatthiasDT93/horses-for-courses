@@ -16,7 +16,7 @@
         {
             <tr>
                 <td>
-                    <select name="TimeSlots[@i].Day">
+                    <select name="NewSlots[@i].Day">
                         @foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
                         {
                             <option value="@day" selected="@(Model.NewSlots[i].Day == day ? "selected" : null)">
@@ -26,11 +26,12 @@
                     </select>
                 </td>
                 <td>
-                    <input type="time" name="TimeSlots[@i].Start" value="@Model.NewSlots[i].Start.ToString("HH:mm")" />
+                    <input type="time" name="NewSlots[@i].Start" value="@Model.NewSlots[i].Start.ToString("HH:mm")" />
                 </td>
                 <td>
-                    <input type="time" name="TimeSlots[@i].End" value="@Model.NewSlots[i].End.ToString("HH:mm")" />
+                    <input type="time" name="NewSlots[@i].End" value="@Model.NewSlots[i].End.ToString("HH:mm")" />
                 </td>
+                <td><button type="button" onclick="removeRow(this)">Delete</button></td>
             </tr>
         }
     </table>
@@ -47,7 +48,7 @@
 
         row.innerHTML = `
         <td>
-            <select name="TimeSlots[${index}].Day">
+            <select name="NewSlots[${index}].Day">
                 <option>Monday</option>
                 <option>Tuesday</option>
                 <option>Wednesday</option>
@@ -57,8 +58,8 @@
                 <option>Sunday</option>
             </select>
         </td>
-        <td><input type="time" name="TimeSlots[${index}].Start" /></td>
-        <td><input type="time" name="TimeSlots[${index}].End" /></td>
+        <td><input type="time" name="NewSlots[${index}].Start" /></td>
+        <td><input type="time" name="NewSlots[${index}].End" /></td>
         <td><button type="button" onclick="removeRow(this)">Delete</button></td>
     `;
 
@@ -75,7 +76,7 @@
             r.querySelectorAll('select, input[type="time"]').forEach(input => {
                 const parts = input.name.split('.');
                 const field = parts[1]; // Day, Start, End
-                input.name = `TimeSlots[${i}].${field}`;
+                input.name = `NewSlots[${i}].${field}`;
             });
         });
     }
