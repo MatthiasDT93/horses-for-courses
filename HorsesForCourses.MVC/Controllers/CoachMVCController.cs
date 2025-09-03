@@ -66,24 +66,54 @@ public class CoachMVCController : Controller
     }
 
 
+    // [HttpGet]
+    // public async Task<IActionResult> EditCoachSkillsForm(int id)
+    // {
+    //     var coach = await _service.GetById(id);
+    //     var model = new EditCoachSkillsViewModel(id, string.Join(", ", coach.Skills), coach.Name);
+    //     return View(model);
+    // }
+
+    // [HttpPost]
+    // [ValidateAntiForgeryToken]
+    // public async Task<IActionResult> EditCoachSkillsForm(int id, string txtskillsinput)
+    // {
+    //     var txtskills = txtskillsinput?
+    //                     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    //                     .ToList() ?? new List<string>();
+    //     var result = await _service.ModifySkills(txtskills, id);
+    //     if (!result)
+    //         return View(new EditCoachSkillsViewModel(id, txtskillsinput!));
+    //     return RedirectToAction(nameof(Index));
+    // }
+
     [HttpGet]
-    public async Task<IActionResult> EditCoachSkillsForm(int id)
+    public async Task<IActionResult> EditMenu(int id)
     {
         var coach = await _service.GetById(id);
-        var model = new EditCoachSkillsViewModel(id, string.Join(", ", coach.Skills), coach.Name);
+        if (coach == null)
+            return NotFound();
+
+        var model = new EditCoachSkillsViewModel
+        {
+            CoachId = coach.Id,
+            CoachName = coach.Name,
+            CurrentSkills = coach.Skills.ToList()
+        };
         return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditCoachSkillsForm(int id, string txtskillsinput)
+    public async Task<IActionResult> EditSkills(EditCoachSkillsViewModel model)
     {
-        var txtskills = txtskillsinput?
-                        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                        .ToList() ?? new List<string>();
-        var result = await _service.ModifySkills(txtskills, id);
-        if (!result)
-            return View(new EditCoachSkillsViewModel(id, txtskillsinput!));
-        return RedirectToAction(nameof(Index));
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var success = await _service.ModifySkills(model.NewSkills, model.CoachId);
+        if (!success)
+            return NotFound();
+
+        return RedirectToAction(nameof(Details), new { id = model.CoachId });
     }
 }
