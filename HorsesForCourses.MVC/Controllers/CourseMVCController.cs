@@ -94,6 +94,7 @@ public class CourseMVCController : Controller
         return View(model);
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditCourseTimeslotsForm(EditCourseTimeslotsViewModel model)

@@ -98,7 +98,7 @@ public class CoachMVCController : Controller
         {
             CoachId = coach.Id,
             CoachName = coach.Name,
-            CurrentSkills = coach.Skills.ToList()
+            Skills = coach.Skills.ToList()
         };
         return View(model);
     }
@@ -110,7 +110,7 @@ public class CoachMVCController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var success = await _service.ModifySkills(model.NewSkills, model.CoachId);
+        var success = await _service.ModifySkills(model.Skills, model.CoachId);
         if (!success)
             return NotFound();
 
