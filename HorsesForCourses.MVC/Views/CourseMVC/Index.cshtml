@@ -39,10 +39,23 @@
                     <form asp-controller="CourseMVC" asp-action="ConfirmCourse" method="post" style="display:inline">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@course.Id" />
-                        <button type="submit" class="btn btn-success btn-sm">Confirm course</button>
+                        <button type="submit"
+                                class="btn btn-success btn-sm confirm-btn"
+                                @(course.hasCoach ? "disabled" : "")>
+                                @(course.hasCoach ? "Confirmed" : "Confirm course")</button>
                     </form>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    function disableButton(form) {
+        const button = form.querySelector('.confirm-btn');
+        if(!button.disabled){
+            button.disabled = true;
+            button.innerText = 'Confirmed...';
+        }
+    }
+</script>
