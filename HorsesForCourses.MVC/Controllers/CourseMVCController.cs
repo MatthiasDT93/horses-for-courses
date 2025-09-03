@@ -86,9 +86,8 @@ public class CourseMVCController : Controller
     }
 
 
-
     [HttpGet]
-    public async Task<IActionResult> EditTimeslotsMenu(int id)
+    public async Task<IActionResult> EditTimeSlotsMenu(int id)
     {
         var course = await _service.GetById(id);
         var model = new EditCourseTimeslotsViewModel(course.Id, course.Name, course.timeslots);
@@ -105,5 +104,4 @@ public class CourseMVCController : Controller
         await _service.ModifyTimeSlots(model.NewSlots, model.Id);
         return RedirectToAction(nameof(Details), new { id = model.Id });
     }
-
 }
