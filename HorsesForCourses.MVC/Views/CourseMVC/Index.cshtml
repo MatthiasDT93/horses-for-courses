@@ -35,6 +35,13 @@
                         asp-route-id="@course.Id">Edit skill requirements</a></td>
                 <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditTimeslotsMenu"
                         asp-route-id="@course.Id">Edit schedule</a></td>
+                <td>
+                    <form asp-controller="CourseMVC" asp-action="ConfirmCourse" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@course.Id" />
+                        <button type="submit" class="btn btn-success btn-sm">Confirm course</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>

@@ -105,4 +105,19 @@ public class CourseMVCController : Controller
         await _service.ModifyTimeSlots(model.NewSlots, model.Id);
         return RedirectToAction(nameof(Details), new { id = model.Id });
     }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmCourse(EditCourseTimeslotsViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var success = await _service.ConfirmCourse(model.Id);
+        if (!success)
+            return NotFound();
+
+        return RedirectToAction(nameof(Details), new { id = model.Id });
+    }
 }
