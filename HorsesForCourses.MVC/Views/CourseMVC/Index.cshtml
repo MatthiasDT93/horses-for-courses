@@ -15,7 +15,7 @@
             <th>Has schedule</th>
             <th>Has coach</th>
             <th>Edit</th>
-            <th>&nbsp;</th>
+            <th>Finalise</th>
         </tr>
     </thead>
     <tbody>
@@ -43,6 +43,14 @@
                                 class="btn btn-success btn-sm confirm-btn"
                                 @(course.hasCoach ? "disabled" : "")>
                                 @(course.hasCoach ? "Confirmed" : "Confirm course")</button>
+                    </form>
+                    <form asp-controller="CourseMVC" asp-action="AssignCoachMenu" method="get" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@course.Id" />
+                        <button type="submit"
+                                class="btn btn-success btn-sm"
+                                @(course.hasCoach ? "disabled" : "")>
+                                @(course.hasCoach ? "Finalised" : "Assign Coach")</button>
                     </form>
                 </td>
             </tr>

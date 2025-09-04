@@ -1,0 +1,23 @@
+@using HorsesForCourses.MVC.Models.Coaches;
+@using HorsesForCourses.MVC.Models.Courses
+@using HorsesForCourses.Service;
+
+@model AssignCoachViewModel
+
+<h2>Assigning coach to course: @Model.CourseName</h2>
+
+<form asp-controller="CourseMVC" asp-action="AssignCoach" method="post" id="editForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="CourseId" />
+
+    <select id="coach-select" name="CoachId">
+        <option value="" disabled>Choose a coach</option>
+        @foreach (var coach in @Model.Coaches.Items)
+        {
+            <option value="@coach.Id">
+                @coach.Id - @coach.Name
+            </option>
+        }
+    </select>
+    <button type="submit">Save</button>
+</form>

@@ -124,6 +124,25 @@ public class CourseMVCController : Controller
         return RedirectToAction(nameof(Details), new { id = model.Id });
     }
 
+
+    [HttpGet]
+    public async Task<IActionResult> AssignCoachMenu(int id)
+    {
+        var course = await _service.GetById(id);
+        if (course == null)
+            return NotFound();
+        var coaches = await _coachservice.GetAll(1, 100, default);
+
+        var model = new AssignCoachViewModel
+        {
+            CourseId = course.Id,
+            CourseName = course.Name,
+            Coaches = coaches
+        };
+
+        return View(model);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AssignCoach(int courseid, int coachid)

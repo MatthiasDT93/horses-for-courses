@@ -27,7 +27,11 @@
             <td>
                 <pre>@string.Join(Environment.NewLine, Model.timeslots.OrderBy(t => t.Day).Select(t => $"{t.Day} : {t.Start:HH\\:mm} - {t.End:HH\\:mm}"))</pre>
             </td>
-            <td>@Model.coach</td>
+            <td>ID: @Model.coach?.ToString()?.Replace("{ Id =", "").Replace("Name =", "").Replace("}", "").Split(",",
+                                StringSplitOptions.TrimEntries)[0] -
+                Name: @Model.coach?.ToString()?.Replace("{ Id =", "").Replace("Name =", "").Replace("}", "").Split(",",
+                                StringSplitOptions.TrimEntries)[1]
+            </td>
         </tr>
     </tbody>
 </table>
