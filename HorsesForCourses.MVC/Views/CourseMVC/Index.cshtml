@@ -43,14 +43,16 @@
                         <input type="hidden" name="Id" value="@course.Id" />
                         <button type="submit" class="btn btn-success btn-sm confirm-btn" @(course.State.ToString() !=
                                                                                                                  "PENDING" ? "disabled" : "")>
-                            @(course.State.ToString() != "PENDING" ? "Confirmed" : "Confirm course")</button>
+                            Confirm course
+                        </button>
                     </form>
                     <form asp-controller="CourseMVC" asp-action="AssignCoachMenu" method="get" style="display:inline">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@course.Id" />
                         <button type="submit" class="btn btn-success btn-sm" @(course.State.ToString() != "CONFIRMED" ?
                                                                                                      "disabled" : "")>
-                            @(course.State.ToString() == "FINALISED" ? "Finalised" : "Assign Coach")</button>
+                            Add coach
+                        </button>
                     </form>
                 </td>
             </tr>
