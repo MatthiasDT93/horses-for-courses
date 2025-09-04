@@ -34,33 +34,31 @@
 </table>
 
 
-<!-- Paging -->
-<div>
-    @*<span>Page @Model.PageNumber of @Model.TotalPages</span>*@
-    <div class="btn-group" role="group">
+<nav>
+    <ul class="pagination">
         @if (Model.HasPrevious)
         {
-            <a href="@Url.Action("Index", new { page = Model.PageNumber - 1, pageSize = Model.PageSize })"
-                class="btn btn-primary btn-sm">
-                Previous
-            </a>
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span> Previous
+                </a>
+            </li>
         }
-        <nav>
-            <ul class="pagination">
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
-                    </li>
-                }
-            </ul>
-        </nav>
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+
         @if (Model.HasNext)
         {
-            <a href="@Url.Action("Index", new { page = Model.PageNumber + 1, pageSize = Model.PageSize })"
-                class="btn btn-primary btn-sm">
-                Next
-            </a>
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" aria-label="Next">
+                    Next <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
         }
-    </div>
-</div>
+    </ul>
+</nav>

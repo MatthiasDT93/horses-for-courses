@@ -22,7 +22,14 @@ public record Booking
         {
             foreach (var slot in planning)
             {
-                if (slot.Day > enddate.DayOfWeek || slot.Day < startdate.DayOfWeek) { throw new Exception("Day of timeslot should appear in duration of booking."); }
+                if (startdate.DayOfWeek <= enddate.DayOfWeek)
+                {
+                    if (!(slot.Day >= startdate.DayOfWeek && slot.Day <= enddate.DayOfWeek))
+                    {
+                        throw new Exception("Day of timeslot should appear in duration of booking.");
+                    }
+                }
+                else { if (!(slot.Day >= startdate.DayOfWeek || slot.Day <= enddate.DayOfWeek)) { throw new Exception("Day of timeslot should appear in duration of booking."); } }
             }
         }
         return new Booking(planning, startdate, enddate);
