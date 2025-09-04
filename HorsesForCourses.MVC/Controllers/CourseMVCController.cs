@@ -32,7 +32,7 @@ public class CourseMVCController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int size = 20, CancellationToken ct = default)
+    public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
     {
         var result = await _service.GetAll(page, size, ct);
         if (result == null)
