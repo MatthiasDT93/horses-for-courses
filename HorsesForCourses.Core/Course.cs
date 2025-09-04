@@ -12,7 +12,7 @@ public class Course
     public int Id { get; private set; }
     public string CourseName { get; set; }
 
-    private States Status;
+    public States Status;
 
     public List<string> RequiredCompetencies { get; private set; }
 

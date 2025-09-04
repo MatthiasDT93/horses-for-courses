@@ -69,7 +69,8 @@ public class EFCourseRepository : IEFCourseRepository
                                     c.StartDate,
                                     c.EndDate,
                                     c.Planning.Count != 0,
-                                    c.coach != null
+                                    c.coach != null,
+                                    c.Status
                                 )).ToPagedResultAsync(request, ct);
     }
 

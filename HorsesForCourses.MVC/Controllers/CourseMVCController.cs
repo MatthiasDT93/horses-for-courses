@@ -32,7 +32,7 @@ public class CourseMVCController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
+    public async Task<IActionResult> Index(int page = 1, int size = 20, CancellationToken ct = default)
     {
         var result = await _service.GetAll(page, size, ct);
         if (result == null)
@@ -121,7 +121,7 @@ public class CourseMVCController : Controller
         if (!success)
             return NotFound();
 
-        return RedirectToAction(nameof(Details), new { id = model.Id });
+        return RedirectToAction(nameof(Index));
     }
 
 
@@ -148,6 +148,6 @@ public class CourseMVCController : Controller
     public async Task<IActionResult> AssignCoach(int courseid, int coachid)
     {
         var success = await _service.AssignCoach(courseid, coachid);
-        return RedirectToAction(nameof(Details), new { id = courseid });
+        return RedirectToAction(nameof(Index));
     }
 }

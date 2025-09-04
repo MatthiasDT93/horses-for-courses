@@ -14,6 +14,7 @@
             <th>End date</th>
             <th>Has schedule</th>
             <th>Has coach</th>
+            <th>Status</th>
             <th>Edit</th>
             <th>Finalise</th>
         </tr>
@@ -28,6 +29,7 @@
                 <td>@course.enddate</td>
                 <td>@course.hasSchedule</td>
                 <td>@course.hasCoach</td>
+                <td>@course.State</td>
                 <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="Details"
                         asp-route-id="@course.Id">Details</a>
                     <a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditSkillsMenu"
@@ -39,18 +41,16 @@
                     <form asp-controller="CourseMVC" asp-action="ConfirmCourse" method="post" style="display:inline">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@course.Id" />
-                        <button type="submit"
-                                class="btn btn-success btn-sm confirm-btn"
-                                @(course.hasCoach ? "disabled" : "")>
-                                @(course.hasCoach ? "Confirmed" : "Confirm course")</button>
+                        <button type="submit" class="btn btn-success btn-sm confirm-btn" @(course.State.ToString() !=
+                                                                                                                 "PENDING" ? "disabled" : "")>
+                            @(course.State.ToString() != "PENDING" ? "Confirmed" : "Confirm course")</button>
                     </form>
                     <form asp-controller="CourseMVC" asp-action="AssignCoachMenu" method="get" style="display:inline">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@course.Id" />
-                        <button type="submit"
-                                class="btn btn-success btn-sm"
-                                @(course.hasCoach ? "disabled" : "")>
-                                @(course.hasCoach ? "Finalised" : "Assign Coach")</button>
+                        <button type="submit" class="btn btn-success btn-sm" @(course.State.ToString() != "CONFIRMED" ?
+                                                                                                     "disabled" : "")>
+                            @(course.State.ToString() == "FINALISED" ? "Finalised" : "Assign Coach")</button>
                     </form>
                 </td>
             </tr>
@@ -61,7 +61,7 @@
 <script>
     function disableButton(form) {
         const button = form.querySelector('.confirm-btn');
-        if(!button.disabled){
+        if (!button.disabled) {
             button.disabled = true;
             button.innerText = 'Confirmed...';
         }

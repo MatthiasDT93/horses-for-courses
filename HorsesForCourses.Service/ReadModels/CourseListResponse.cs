@@ -11,8 +11,9 @@ public class CourseListResponse
     public DateOnly enddate { get; set; }
     public bool hasSchedule { get; set; }
     public bool hasCoach { get; set; }
+    public States State;
 
-    public CourseListResponse(int id, string name, DateOnly start, DateOnly end, bool schedule, bool coach)
+    public CourseListResponse(int id, string name, DateOnly start, DateOnly end, bool schedule, bool coach, States state)
     {
         Id = id;
         Name = name;
@@ -20,6 +21,7 @@ public class CourseListResponse
         enddate = end;
         hasSchedule = schedule;
         hasCoach = coach;
+        State = state;
     }
 
 }
