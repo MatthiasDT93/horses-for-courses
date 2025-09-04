@@ -13,9 +13,12 @@ public class CourseMVCController : Controller
 {
     private readonly ICourseService _service;
 
-    public CourseMVCController(ICourseService service)
+    private readonly ICoachService _coachservice;
+
+    public CourseMVCController(ICourseService service, ICoachService coachservice)
     {
         _service = service;
+        _coachservice = coachservice;
     }
 
 
@@ -119,5 +122,13 @@ public class CourseMVCController : Controller
             return NotFound();
 
         return RedirectToAction(nameof(Details), new { id = model.Id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AssignCoach(int courseid, int coachid)
+    {
+        var success = await _service.AssignCoach(courseid, coachid);
+        return RedirectToAction(nameof(Details), new { id = courseid });
     }
 }

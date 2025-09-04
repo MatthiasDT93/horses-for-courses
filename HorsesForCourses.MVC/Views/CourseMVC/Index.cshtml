@@ -14,8 +14,7 @@
             <th>End date</th>
             <th>Has schedule</th>
             <th>Has coach</th>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
+            <th>Edit</th>
             <th>&nbsp;</th>
         </tr>
     </thead>
@@ -30,11 +29,12 @@
                 <td>@course.hasSchedule</td>
                 <td>@course.hasCoach</td>
                 <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="Details"
-                        asp-route-id="@course.Id">Details</a></td>
-                <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditSkillsMenu"
-                        asp-route-id="@course.Id">Edit skill requirements</a></td>
-                <td><a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditTimeslotsMenu"
-                        asp-route-id="@course.Id">Edit schedule</a></td>
+                        asp-route-id="@course.Id">Details</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditSkillsMenu"
+                        asp-route-id="@course.Id">Edit skill requirements</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="CourseMVC" asp-action="EditTimeslotsMenu"
+                        asp-route-id="@course.Id">Edit schedule</a>
+                </td>
                 <td>
                     <form asp-controller="CourseMVC" asp-action="ConfirmCourse" method="post" style="display:inline">
                         @Html.AntiForgeryToken()

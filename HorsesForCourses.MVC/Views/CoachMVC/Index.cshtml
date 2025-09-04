@@ -12,8 +12,7 @@
             <th>Name</th>
             <th>Email</th>
             <th># Courses Assigned</th>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
+            <th>Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -23,11 +22,12 @@
                 <td>@coach.Id</td>
                 <td>@coach.Name</td>
                 <td>@coach.Email</td>
-                <td>@coach.NumberOfCoursesAssignedTo</td>
+                <td>@coach.NumberOfCoursesAssignedTo
                 <td><a class="nav-link text-dark" asp-area="" asp-controller="CoachMVC" asp-action="Details"
-                        asp-route-id="@coach.Id">Details</a></td>
-                <td><a class="nav-link text-dark" asp-area="" asp-controller="CoachMVC" asp-action="EditMenu"
-                        asp-route-id="@coach.Id">Edit skills</a></td>
+                        asp-route-id="@coach.Id">Details</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="CoachMVC" asp-action="EditMenu"
+                        asp-route-id="@coach.Id">Edit skills</a>
+                </td>
             </tr>
         }
     </tbody>
