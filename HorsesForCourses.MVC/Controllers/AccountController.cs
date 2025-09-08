@@ -27,10 +27,19 @@ public class AccountController : Controller
 
 
     [HttpPost]
-    public async Task<IActionResult> Login(string email)
+    public async Task<IActionResult> Login(string email, string password)
     {
         var claims = new List<Claim> { new Claim(ClaimTypes.Name, email) };
         var id = new ClaimsIdentity(claims, "Cookies");
+        var hasher = new Pbkdf2PasswordHasher();
+
+        var user = await _service.GetUser(email);
+        if (user is null) return NotFound();
+
+        if (!hasher.Verify(password, user.PasswordHash))
+        {
+            return BadRequest("Invalid password.");
+        }
         await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(id));
         return Redirect("../Home");
     }
@@ -52,9 +61,8 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegisterAccountViewModel account)
     {
-        var newuser = AppUser.From(account.Name, account.Email, account.Pass, account.PassConfirm);
+        var newuser = AppUser.From(account.Name, account.Email, account.Password, account.PassConfirm);
         await _service.AddUser(newuser);
-        await Login(newuser.Email.ToString());
-        return RedirectToAction("../Home");
+        return await Login(newuser.Email.Value, account.Password);
     }
 }
