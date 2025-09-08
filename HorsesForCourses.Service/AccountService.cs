@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using HorsesForCourses.Core;
 
 namespace HorsesForCourses.Service;
@@ -6,6 +7,7 @@ public interface IAccountService
 {
     Task<AppUser> AddUser(AppUser user);
     Task<AppUser?> GetUser(string email);
+    Task RemoveUser(AppUser user);
 }
 
 
@@ -34,5 +36,11 @@ public class AccountService : IAccountService
         var result = await _repository.GetUser(email);
         if (result is null) throw new Exception("User does not exist.");
         return result;
+    }
+
+    public async Task RemoveUser(AppUser user)
+    {
+        _repository.RemoveUser(user);
+        await _uow.SaveChangesAsync();
     }
 }

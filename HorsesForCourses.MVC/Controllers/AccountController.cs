@@ -65,4 +65,15 @@ public class AccountController : Controller
         await _service.AddUser(newuser);
         return await Login(newuser.Email.Value, account.Password);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveUser(string email)
+    {
+        var user = await _service.GetUser(email);
+        if (user is null) return NotFound();
+
+        await _service.RemoveUser(user);
+        await Logout();
+        return Redirect("../Home");
+    }
 }

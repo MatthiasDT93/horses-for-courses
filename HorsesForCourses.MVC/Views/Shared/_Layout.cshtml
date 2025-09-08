@@ -57,6 +57,10 @@
                             <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-link">Logout</button>
                             </form>
+                            <form asp-controller="Account" asp-action="RemoveUser" method="post" class="d-inline">
+                                <input type="hidden" name="email" value="@User.Identity.Name" />
+                                <button type="submit" class="btn btn-link">Delete my account</button>
+                            </form>
                         }
                         else
                         {

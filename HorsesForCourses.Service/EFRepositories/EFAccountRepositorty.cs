@@ -7,6 +7,7 @@ public interface IEFAccountRepository
 {
     Task<AppUser> AddUserToDB(AppUser user);
     Task<AppUser?> GetUser(string email);
+    void RemoveUser(AppUser user);
 }
 
 public class EFAccountRepository : IEFAccountRepository
@@ -31,5 +32,10 @@ public class EFAccountRepository : IEFAccountRepository
         var result = await _context.Users
                                     .FirstOrDefaultAsync(u => u.Email.Value == mail);
         return result;
+    }
+
+    public void RemoveUser(AppUser user)
+    {
+        _context.Users.Remove(user);
     }
 }
