@@ -3,6 +3,7 @@ using System;
 using HorsesForCourses.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,31 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HorsesForCourses.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250908082308_SecondaryCreate")]
+    partial class SecondaryCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
-
-            modelBuilder.Entity("HorsesForCourses.Core.AppUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users", (string)null);
-                });
 
             modelBuilder.Entity("HorsesForCourses.Core.Coach", b =>
                 {
@@ -90,28 +74,23 @@ namespace HorsesForCourses.Service.Migrations
                     b.ToTable("Courses", (string)null);
                 });
 
-            modelBuilder.Entity("HorsesForCourses.Core.AppUser", b =>
+            modelBuilder.Entity("HorsesForCourses.Core.User", b =>
                 {
-                    b.OwnsOne("EmailAddress", "Email", b1 =>
-                        {
-                            b1.Property<int>("AppUserId")
-                                .HasColumnType("INTEGER");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("TEXT")
-                                .HasColumnName("Email");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                            b1.HasKey("AppUserId");
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                            b1.ToTable("Users");
+                    b.HasKey("Id");
 
-                            b1.WithOwner()
-                                .HasForeignKey("AppUserId");
-                        });
-
-                    b.Navigation("Email")
-                        .IsRequired();
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("HorsesForCourses.Core.Coach", b =>
@@ -226,6 +205,30 @@ namespace HorsesForCourses.Service.Migrations
                     b.Navigation("Planning");
 
                     b.Navigation("coach");
+                });
+
+            modelBuilder.Entity("HorsesForCourses.Core.User", b =>
+                {
+                    b.OwnsOne("EmailAddress", "Email", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Email")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HorsesForCourses.Core.Coach", b =>

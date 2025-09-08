@@ -1,0 +1,11 @@
+<form asp-controller="Account" asp-action="Register" method="post" id="editForm">
+    @Html.AntiForgeryToken()
+
+    <input type="text" placeholder="Name" name="Name">
+    <input type="text" placeholder="Email" name="Email">
+    <input type="text" placeholder="Pass" name="Pass">
+    <input type="text" placeholder="PassConfirm" name="PassConfirm">
+
+
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+</form>

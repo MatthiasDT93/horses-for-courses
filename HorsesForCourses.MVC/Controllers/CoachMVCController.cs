@@ -5,9 +5,11 @@ using HorsesForCourses.Service;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Console;
 using HorsesForCourses.MVC.Models.Coaches;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HorsesForCourses.MVC.Controllers;
 
+[Authorize]
 public class CoachMVCController : Controller
 {
     private readonly ICoachService _service;
@@ -38,6 +40,7 @@ public class CoachMVCController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
     {
         var result = await _service.GetAll(page, size, ct);
