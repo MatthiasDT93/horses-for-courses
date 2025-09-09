@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Console;
 using HorsesForCourses.MVC.Models.Courses;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HorsesForCourses.MVC.Controllers;
 
+[Authorize]
 public class CourseMVCController : Controller
 {
     private readonly ICourseService _service;
@@ -42,6 +44,7 @@ public class CourseMVCController : Controller
 
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public IActionResult CreateCourseForm()
     {
         return View(new CreateCourseViewModel());
@@ -49,6 +52,7 @@ public class CourseMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCourseForm(string txtcoursename, DateOnly txtstart, DateOnly txtend)
     {
         var result = await _service.AddCourse(txtcoursename, txtstart, txtend);
@@ -59,6 +63,7 @@ public class CourseMVCController : Controller
 
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditSkillsMenu(int id)
     {
         var course = await _service.GetById(id);
@@ -76,6 +81,7 @@ public class CourseMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditSkills(EditCourseSkillsViewModel model)
     {
         if (!ModelState.IsValid)
@@ -90,6 +96,7 @@ public class CourseMVCController : Controller
 
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditTimeSlotsMenu(int id)
     {
         var course = await _service.GetById(id);
@@ -100,6 +107,7 @@ public class CourseMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditCourseTimeslotsForm(EditCourseTimeslotsViewModel model)
     {
         if (!ModelState.IsValid)
@@ -112,6 +120,7 @@ public class CourseMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> ConfirmCourse(EditCourseTimeslotsViewModel model)
     {
         if (!ModelState.IsValid)
@@ -126,6 +135,7 @@ public class CourseMVCController : Controller
 
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> AssignCoachMenu(int id)
     {
         var course = await _service.GetById(id);
@@ -145,6 +155,7 @@ public class CourseMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> AssignCoach(int courseid, int coachid)
     {
         var success = await _service.AssignCoach(courseid, coachid);
