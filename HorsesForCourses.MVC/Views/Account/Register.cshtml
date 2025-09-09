@@ -1,11 +1,26 @@
 <form asp-controller="Account" asp-action="Register" method="post" id="editForm">
     @Html.AntiForgeryToken()
 
-    <input type="text" placeholder="Name" name="Name">
-    <input type="text" placeholder="Email" name="Email">
-    <input type="text" placeholder="Password" name="Password">
-    <input type="text" placeholder="PassConfirm" name="PassConfirm">
+    <input type="text" placeholder="Name" name="Name" required>
+    <input type="text" placeholder="Email" name="Email" required>
+    <input type="text" placeholder="Password" name="Password" required>
+    <input type="text" placeholder="PassConfirm" name="PassConfirm" required>
+    <br>
+    <label>
+        <input type="radio" name="choice" value="admin" required>
+        Admin
+    </label><br>
 
+    <label>
+        <input type="radio" name="choice" value="coach" required>
+        Coach
+    </label><br>
+
+    <label>
+        <input type="radio" name="choice" value="anonymous" required>
+        Anonymous
+    </label>
+    <br>
 
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
 </form>

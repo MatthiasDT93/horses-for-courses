@@ -1,0 +1,19 @@
+@model string
+@{
+    ViewData["Title"] = "Access Denied";
+}
+<h1 class="display-6">403 — Access denied</h1>
+<p>You are logged in but lack the required permissions to perform this action.</p>
+@if (!string.IsNullOrWhiteSpace(Model))
+{
+    <p>
+        <a class="btn btn-primary" href="@Model">Go back</a>
+        <a class="btn btn-outline-secondary" href="/">to homepage</a>
+    </p>
+}
+else
+{
+    <p>
+        <a class="btn btn-outline-secondary" href="/">To homepage</a>
+    </p>
+}

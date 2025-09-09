@@ -26,12 +26,18 @@ public class AccountController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult AccessDenied(string? returnUrl = null)
+    {
+        return View(model: returnUrl);
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
         var claims = new List<Claim> { new Claim(ClaimTypes.Name, email) };
-        var id = new ClaimsIdentity(claims, "Cookies");
+
         var hasher = new Pbkdf2PasswordHasher();
 
         var user = await _service.GetUser(email);
@@ -41,6 +47,9 @@ public class AccountController : Controller
         {
             return BadRequest("Invalid password.");
         }
+
+        claims.Add(new Claim(ClaimTypes.Role, user.Role));
+        var id = new ClaimsIdentity(claims, "Cookies");
         await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(id));
         return Redirect("../Home");
     }
@@ -60,9 +69,10 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterAccountViewModel account)
+    public async Task<IActionResult> Register(RegisterAccountViewModel account, string choice)
     {
-        var newuser = AppUser.From(account.Name, account.Email, account.Password, account.PassConfirm);
+        var newuser = AppUser.From(account.Name, account.Email, account.Password, account.PassConfirm, choice);
+
         await _service.AddUser(newuser);
         return await Login(newuser.Email.Value, account.Password);
     }
