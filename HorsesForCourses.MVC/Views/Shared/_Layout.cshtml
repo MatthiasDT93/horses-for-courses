@@ -50,16 +50,20 @@
                             asp-action="Register">Register a user</a>
                         </li>
                     </ul>
-                    <div>
+                    <div align="center">
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
-                            <p>@User.Identity.Name</p>
+                            <p style="margin:0; padding:0;">@User.Identity.Name</p>
                             <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-link">Logout</button>
                             </form>
                             <form asp-controller="Account" asp-action="RemoveUser" method="post" class="d-inline">
                                 <input type="hidden" name="email" value="@User.Identity.Name" />
                                 <button type="submit" class="btn btn-link">Delete my account</button>
+                            </form>
+                            <form asp-controller="Account" asp-action="DownloadUserData" method="post" class="d-inline">
+                                <input type="hidden" name="email" value="@User.Identity.Name" />
+                                <button type="submit" class="btn btn-link">Download my account data</button>
                             </form>
                         }
                         else

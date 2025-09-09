@@ -1,6 +1,7 @@
 
 
 using System.Security.Claims;
+using System.Text.Json;
 using HorsesForCourses.Core;
 using HorsesForCourses.MVC.Models.Accounts;
 using HorsesForCourses.Service;
@@ -75,5 +76,17 @@ public class AccountController : Controller
         await _service.RemoveUser(user);
         await Logout();
         return Redirect("../Home");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DownloadUserData(string email)
+    {
+        var user = await _service.GetUser(email);
+        if (user is null) return NotFound();
+
+        var json = JsonSerializer.Serialize(user);
+        var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+
+        return File(bytes, "application/json", "userdata.json");
     }
 }
