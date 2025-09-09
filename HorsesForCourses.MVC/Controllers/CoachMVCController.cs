@@ -53,7 +53,7 @@ public class CoachMVCController : Controller
 
 
     [HttpGet]
-    [Authorize(Roles = "admin, coach")]
+    [Authorize(Roles = "admin")]
     public IActionResult CreateCoachForm()
     {
         return View(new CreateCoachViewModel());
@@ -61,7 +61,7 @@ public class CoachMVCController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "admin, coach")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCoachForm(string txtname, string txtemail)
     {
         var result = await _service.AddCoach(txtname, txtemail);
@@ -99,6 +99,10 @@ public class CoachMVCController : Controller
         var coach = await _service.GetById(id);
         if (coach == null)
             return NotFound();
+        if (User.IsInRole("coach") && User.Identity.Name != coach.Email)
+        {
+            return Forbid();
+        }
 
         var model = new EditCoachSkillsViewModel
         {
@@ -116,6 +120,11 @@ public class CoachMVCController : Controller
     {
         if (!ModelState.IsValid)
             return View(model);
+        var coach = await _service.GetById(model.CoachId);
+        if (User.IsInRole("coach") && User.Identity.Name != coach.Email)
+        {
+            return Forbid();
+        }
 
         var success = await _service.ModifySkills(model.Skills, model.CoachId);
         if (!success)

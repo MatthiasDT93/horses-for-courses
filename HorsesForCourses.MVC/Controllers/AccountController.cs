@@ -13,10 +13,12 @@ namespace HorsesForCourses.MVC.Controllers;
 public class AccountController : Controller
 {
     private readonly IAccountService _service;
+    private readonly ICoachService _coachservice;
 
-    public AccountController(IAccountService service)
+    public AccountController(IAccountService service, ICoachService coachservice)
     {
         _service = service;
+        _coachservice = coachservice;
     }
 
 
@@ -72,6 +74,10 @@ public class AccountController : Controller
     public async Task<IActionResult> Register(RegisterAccountViewModel account, string choice)
     {
         var newuser = AppUser.From(account.Name, account.Email, account.Password, account.PassConfirm, choice);
+        if (choice == "coach")
+        {
+            await _coachservice.AddCoach(account.Name, account.Email);
+        }
 
         await _service.AddUser(newuser);
         return await Login(newuser.Email.Value, account.Password);
