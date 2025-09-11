@@ -16,7 +16,7 @@ public class AppUserCrudTests : CrudTestBase<AppDbContext, AppUser>
 
     protected override AppUser CreateEntity()
     {
-        return AppUser.From("Mark", "mark@skynet.com", "123", "123");
+        return AppUser.From("Mark", "mark@skynet.com", "123", "123", "admin");
     }
 
     protected override DbSet<AppUser> GetDbSet(AppDbContext context)
