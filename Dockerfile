@@ -10,8 +10,7 @@ COPY HorsesForCourses.Core/ HorsesForCourses.Core/
 COPY HorsesForCourses.MVC/ HorsesForCourses.MVC/
 COPY HorsesForCourses.Service/ HorsesForCourses.Service/
 
-RUN dotnet restore HorsesForCourses.sln
-
+RUN ls -R /src
 # Restore dependencies
 RUN dotnet restore HorsesForCourses.sln
 
