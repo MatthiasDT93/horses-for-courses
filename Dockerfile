@@ -4,15 +4,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution and all project files
-COPY HorsesForCourses.sln .
+# Copy all project files
 COPY HorsesForCourses.Core/ HorsesForCourses.Core/
 COPY HorsesForCourses.MVC/ HorsesForCourses.MVC/
 COPY HorsesForCourses.Service/ HorsesForCourses.Service/
 
-RUN ls -R /src
 # Restore dependencies
-RUN dotnet restore HorsesForCourses.sln
+RUN dotnet restore HorsesForCourses.MVC/HorsesForCourses.MVC.csproj
 
 # Copy everything else
 COPY . .
